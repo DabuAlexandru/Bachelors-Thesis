@@ -50,6 +50,9 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
     const float radiusModifyRate = 0.5f;
     const int numberOfAffectedNeighbourPairs = 4;
 
+    [SerializeField]
+    bool isEditable = false;
+
     void OnEnable()
     {
         Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
@@ -177,6 +180,9 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
 
     void ModifyRing(int ringLevel, float value)
     {
+        if(!isEditable) {
+            return;
+        }
         Vector3[] myVertices = myMesh.vertices;
         float ringRadiusPer = ringRadiusPercentages[ringLevel];
         ringRadiusPercentages[ringLevel] = Mathf.Clamp(ringRadiusPer + value, minRadiusPercentage, maxRadiusPercentage);
@@ -242,6 +248,10 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
 
     void ModifyNRings()
     {
+        if(!isEditable) {
+            return;
+        }
+
         int firstRing = max(0, ringLevel - numberOfAffectedNeighbourPairs);
         int lastRing = min(resolutionV, ringLevel + numberOfAffectedNeighbourPairs);
         float modificationRate;

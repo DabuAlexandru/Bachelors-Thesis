@@ -1,20 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LaunchPuzzle : MonoBehaviour
 {
     [SerializeField]
     GameObject InteractPromt;
+    Transform Player;
+    bool isActive;
+    int puzzleID;
     // Start is called before the first frame update
     void Start()
     {
+        isActive = false;
         InteractPromt.SetActive(false);
+        Player = GameObject.FindWithTag("Player").transform;
+        GameObject parent = transform.parent.gameObject;
+        puzzleID = parent.GetComponent<SingleStreamCylindricalProceduralMesh>().getColumnID();
     }
 
     void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.CompareTag("Player")) {
+            isActive = true;
             InteractPromt.SetActive(true);
         }
     }
@@ -22,6 +29,7 @@ public class LaunchPuzzle : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         if(other.gameObject.CompareTag("Player")) {
+            isActive = false;
             InteractPromt.SetActive(false);
         }
     }
@@ -30,6 +38,15 @@ public class LaunchPuzzle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(isActive && Input.GetKeyUp(KeyCode.E))
+        {
+            PlayerPrefs.SetFloat("PlayerPositionX", Player.position.x);
+            PlayerPrefs.SetFloat("PlayerPositionY", Player.position.y);
+            PlayerPrefs.SetFloat("PlayerPositionZ", Player.position.z);
+            PlayerPrefs.SetFloat("PlayerRotationY", Player.rotation.y);
+            PlayerPrefs.SetInt("PuzzleID", puzzleID);
+            Debug.Log(puzzleID);
+            SceneManager.LoadScene("SculptingPuzzle");
+        }
     }
 }

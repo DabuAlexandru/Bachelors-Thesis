@@ -2,31 +2,31 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public static class SaveData
+public class PersistanceManager
 {
-    public static void SavePuzzleData (int puzzleID, float[] ringRadiusPercentages)
+    public static void SaveData (string fileName, object dataToBeSaved)
     {
+        string path = Application.persistentDataPath + "/" + fileName + ".data";
+
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/puzzle.data";
         FileStream stream = new FileStream(path, FileMode.Create);
 
-        PuzzleData data = new PuzzleData(puzzleID, ringRadiusPercentages);
-        formatter.Serialize(stream, data);
+        formatter.Serialize(stream, dataToBeSaved);
         stream.Close();
     }
 
-    public static PuzzleData LoadPuzzleData ()
+    public static object LoadData (string fileName)
     {
-        string path = Application.persistentDataPath + "/puzzle.data";
+        string path = Application.persistentDataPath + "/" + fileName + ".data";
         if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
 
-            PuzzleData data = formatter.Deserialize(stream) as PuzzleData;
+            object dataToBeLoaded = formatter.Deserialize(stream);
             stream.Close();
 
-            return data;
+            return dataToBeLoaded;
         }
         else
         {

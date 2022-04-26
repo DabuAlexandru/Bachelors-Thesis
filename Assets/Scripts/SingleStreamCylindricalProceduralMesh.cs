@@ -40,6 +40,11 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
     [SerializeField]
     int columnID;
 
+    public int getColumnID()
+    {
+        return columnID;
+    }
+
     [SerializeField]
     GizmoMode gizmos;
     // the offset of the mouse away from the center of this gameObject

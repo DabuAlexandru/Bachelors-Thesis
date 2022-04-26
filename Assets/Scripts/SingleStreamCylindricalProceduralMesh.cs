@@ -10,6 +10,9 @@ using static Unity.Mathematics.math;
 public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
 {
 
+    const int resolutionU = Constants.resolutionU;
+    const int resolutionV = Constants.resolutionV;
+
     [StructLayout(LayoutKind.Sequential)]
     struct Vertex
     {
@@ -18,8 +21,7 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
         public half2 texCoord0;
     }
     // number of sections
-    const int resolutionU = 30;
-    const int resolutionV = 30;
+
     // dimensions of the generated shape
     private const float radius = 0.5f;
     private const float height = 2.0f;
@@ -34,6 +36,9 @@ public class SingleStreamCylindricalProceduralMesh : MonoBehaviour
 
     [System.Flags]
     public enum GizmoMode { Nothing = 0, Vertices = 1, Normals = 0b10, Tangents = 0b100 }
+
+    [SerializeField]
+    int columnID;
 
     [SerializeField]
     GizmoMode gizmos;

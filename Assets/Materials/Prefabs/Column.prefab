@@ -107,8 +107,8 @@ GameObject:
   - component: {fileID: 1871609972683213406}
   - component: {fileID: 5046167820527281115}
   - component: {fileID: 8140554753937044816}
-  - component: {fileID: 8485620533528860786}
   - component: {fileID: 290666776354002393}
+  - component: {fileID: 7555354725175594461}
   m_Layer: 0
   m_Name: PuzzleColumn
   m_TagString: Untagged
@@ -180,21 +180,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &8485620533528860786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2236109547370092072}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 383f4eaef29f2344089c0335ef3147b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  columnID: 0
-  gizmos: 0
-  isEditable: 0
 --- !u!136 &290666776354002393
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -209,6 +194,21 @@ CapsuleCollider:
   m_Height: 3
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &7555354725175594461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2236109547370092072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2168d8596a62144488664407c1bfff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  columnID: 0
+  gizmos: 0
+  isEditable: 0
 --- !u!1 &2563226699039857344
 GameObject:
   m_ObjectHideFlags: 0

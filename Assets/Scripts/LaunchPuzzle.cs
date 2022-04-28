@@ -15,7 +15,7 @@ public class LaunchPuzzle : MonoBehaviour
         InteractPromt.SetActive(false);
         Player = GameObject.FindWithTag("Player").transform;
         GameObject parent = transform.parent.gameObject;
-        puzzleID = parent.GetComponent<SingleStreamCylindricalProceduralMesh>().getColumnID();
+        puzzleID = parent.GetComponent<Puzzle>().getColumnID();
     }
 
     void OnTriggerEnter(Collider other)

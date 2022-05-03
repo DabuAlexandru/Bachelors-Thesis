@@ -7,29 +7,35 @@ public class PuzzleDictionary
 {
     Dictionary<int, PuzzleData> puzzleDict;
 
-    PuzzleDictionary()
+    public PuzzleDictionary()
     {
         puzzleDict = new Dictionary<int, PuzzleData>();
     }
 
-    PuzzleDictionary(Dictionary<int, PuzzleData> puzzleDictionary)
+    public PuzzleDictionary(PuzzleDictionary puzzleCollection)
+    {
+        this.puzzleDict = puzzleCollection.puzzleDict;
+    }
+
+    public PuzzleDictionary(Dictionary<int, PuzzleData> puzzleDictionary)
     {
         this.puzzleDict = new Dictionary<int, PuzzleData>(puzzleDictionary);
     }
 
     public void AddOrEditPuzzle(PuzzleData newPuzzle)
     {
-        if(puzzleDict.ContainsKey(newPuzzle.puzzleID))
+        int puzzleID = newPuzzle.GetPuzzleID();
+        if(puzzleDict.ContainsKey(puzzleID))
         {
-            puzzleDict[newPuzzle.puzzleID] = newPuzzle;
+            puzzleDict[puzzleID] = newPuzzle;
         }
         else
         {
-            puzzleDict.Add(newPuzzle.puzzleID, newPuzzle);
+            puzzleDict.Add(puzzleID, newPuzzle);
         }
     }
 
-    public PuzzleData getPuzzle(int puzzleID)
+    public PuzzleData GetPuzzle(int puzzleID)
     {
         if(puzzleDict.ContainsKey(puzzleID))
         {
@@ -41,4 +47,6 @@ public class PuzzleDictionary
             return null;
         }
     }
+
+    public bool ContainsKey(int puzzleID) => puzzleDict.ContainsKey(puzzleID);
 }

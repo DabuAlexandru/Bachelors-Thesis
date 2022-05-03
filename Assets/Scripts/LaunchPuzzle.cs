@@ -20,7 +20,8 @@ public class LaunchPuzzle : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Player")) {
+        if (other.gameObject.CompareTag("Player"))
+        {
             isActive = true;
             InteractPromt.SetActive(true);
         }
@@ -28,17 +29,17 @@ public class LaunchPuzzle : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if(other.gameObject.CompareTag("Player")) {
+        if (other.gameObject.CompareTag("Player"))
+        {
             isActive = false;
             InteractPromt.SetActive(false);
         }
     }
-
-
+    
     // Update is called once per frame
     void Update()
     {
-        if(isActive && Input.GetKeyUp(KeyCode.E))
+        if (isActive && Input.GetKeyUp(KeyCode.E))
         {
             PlayerPrefs.SetFloat("PlayerPositionX", Player.position.x);
             PlayerPrefs.SetFloat("PlayerPositionY", Player.position.y);

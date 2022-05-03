@@ -3,24 +3,43 @@ using System.Collections.Generic;
 [System.Serializable]
 public class SavePuzzleData
 {
+    SavePuzzleData()
+    {
+        puzzleCollection = new PuzzleDictionary(GetLoadedPuzzleData());
+    }
+    private static readonly object myLock = new object();
     private static SavePuzzleData _instance;
     public static SavePuzzleData instance
     {
         get
         {
-            if(_instance == null)
+            lock (myLock)
             {
-                _instance = new SavePuzzleData();
+                if (_instance == null)
+                {
+                    _instance = new SavePuzzleData();
+                }
+                return _instance;
             }
-            return _instance;
         }
         set
         {
-            if(value != null)
+            if (value != null)
             {
                 _instance = value;
             }
         }
     }
+
+    public PuzzleDictionary GetLoadedPuzzleData()
+    {
+        return (PuzzleDictionary)PersistanceManager.LoadData(Constants.puzzleDataFile);
+    }
+
+    public void SavePuzzleDataToFile()
+    {
+        PersistanceManager.SaveData(Constants.puzzleDataFile, puzzleCollection);
+    }
+
     public PuzzleDictionary puzzleCollection;
 }

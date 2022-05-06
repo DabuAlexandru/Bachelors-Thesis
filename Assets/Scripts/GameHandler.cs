@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameHandler : MonoBehaviour
 {
     Transform Player;
-    
+
     void Start()
     {
         Player = GameObject.FindWithTag("Player").transform;
@@ -23,13 +23,11 @@ public class GameHandler : MonoBehaviour
 
         position.z = PlayerPrefs.GetFloat("PlayerPositionZ", -3.0f);
         PlayerPrefs.DeleteKey("PlayerPositionZ");
-        Debug.Log(position);
         Player.transform.position = position;
 
         float rotationY;
         rotationY = PlayerPrefs.GetFloat("PlayerRotationY", 0.0f);
         PlayerPrefs.DeleteKey("PlayerRotationY");
-        Debug.Log(rotationY);
 
         Player.transform.Rotate(new Vector3(0.0f, rotationY, 0.0f));
     }

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SeaWaves
+  m_Name: Ripple
   m_Shader: {fileID: -6465566751694194690, guid: 9bc61031c62f2c9499bc0842464747bf, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -72,9 +72,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_63f4cf3300884e6db6faa16a2d2ea9bf: 0.96
-    - Vector1_ce4c91e73a8e41429c1e04db46aaae8c: 0.1
-    - Vector1_df0e6918aa1a451cb55859400f229038: 0.5
+    - Vector1_63f4cf3300884e6db6faa16a2d2ea9bf: 4
+    - Vector1_ce4c91e73a8e41429c1e04db46aaae8c: 0.2
+    - Vector1_df0e6918aa1a451cb55859400f229038: 0.1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -92,6 +92,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - Color_1d1027f375864c2d87410803e3462f52: {r: 0.9490196, g: 0.039215688, b: 0.039215688, a: 1}
     - Vector3_7eab600f920d4d958e82956152a52195: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 0.5882353, g: 0.8666667, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

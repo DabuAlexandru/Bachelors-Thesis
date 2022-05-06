@@ -46,7 +46,6 @@ public class LaunchPuzzle : MonoBehaviour
             PlayerPrefs.SetFloat("PlayerPositionZ", Player.position.z);
             PlayerPrefs.SetFloat("PlayerRotationY", Player.rotation.y);
             PlayerPrefs.SetInt("PuzzleID", puzzleID);
-            Debug.Log(puzzleID);
             SceneManager.LoadScene("SculptingPuzzle");
         }
     }

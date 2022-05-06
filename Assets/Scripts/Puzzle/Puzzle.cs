@@ -34,6 +34,9 @@ public class Puzzle : MonoBehaviour
     const float radiusModifyRate = 0.5f;
     const int numberOfAffectedNeighbourPairs = 4;
 
+    [SerializeField, Range(80.0f, 99.0f)]
+    float minValidScore = 95.0f;
+
     [SerializeField]
     bool isPreview = false;
 
@@ -51,7 +54,6 @@ public class Puzzle : MonoBehaviour
     private Vector3[] verticesInitialPos;
     public Button submitButton;
     public Button resetButton;
-    public Button testButton;
     public TMP_Text similarityText;
 
     void Update()
@@ -62,12 +64,19 @@ public class Puzzle : MonoBehaviour
         }
     }
 
-    void UpdateSimilarityText()
+    public bool IsPuzzleSolved() => (GetSimilarity() >= minValidScore);
+
+    float GetSimilarity()
     {
         float difference = PuzzleDataUtils.GetDifference(ringRadiusPercentages, intendedConfiguration);
         float maxDifferencePerRing = maxRadiusPercentage - minRadiusPercentage;
         float totalPossibleDiference = maxDifferencePerRing * resolutionV;
-        string similarity = (100.0f * (1.0f - (difference / totalPossibleDiference))).ToString("0.00");
+        return 100.0f * (1.0f - (difference / totalPossibleDiference));
+    }
+
+    void UpdateSimilarityText()
+    {
+        string similarity = GetSimilarity().ToString("0.00");
         similarityText.SetText("Similarity: " + similarity + "%");
     }
 
@@ -175,10 +184,6 @@ public class Puzzle : MonoBehaviour
         if (!(resetButton is null))
         {
             resetButton.onClick.AddListener((UnityEngine.Events.UnityAction)ResetPuzzle);
-        }
-        if (!(testButton is null))
-        {
-            testButton.onClick.AddListener((UnityEngine.Events.UnityAction)TestPuzzle);
         }
     }
 
@@ -296,12 +301,5 @@ public class Puzzle : MonoBehaviour
         RefreshMesh();
         UpdateSimilarityText();
         Debug.Log("Reset");
-    }
-
-    public void TestPuzzle()
-    {
-        PuzzleData test = SavePuzzleData.instance.puzzleCollection.GetPuzzle(columnID);
-        SetRadiusPercentages(test.GetIntendedConfiguration());
-        RefreshMesh();
     }
 }

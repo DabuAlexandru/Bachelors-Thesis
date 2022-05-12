@@ -13,13 +13,23 @@ public class InfoBox : MonoBehaviour
 
     private Transform myCamera;
 
+    void EnableBoard()
+    {
+        
+    }
+
+    void DisableBoard()
+    {
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         // Set
         myCamera = Camera.main.transform;
         // At start make the object non visible
-        // gameObject.SetActive(false);
+        gameObject.SetActive(false);
         // Set the text of the info box
         textmeshPro.SetText(infoText);
     }

@@ -33,7 +33,7 @@ public class PuzzleDataUtils
 [System.Serializable]
 public class PuzzleData
 {
-    const int resolutionV = Constants.resolutionV;
+    const int resolutionV = Constants.puzzleResolutionV;
     private int puzzleID;
     private float[] ringRadiusPercentages;
     private float[] intendedConfiguration;

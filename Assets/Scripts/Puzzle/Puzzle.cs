@@ -6,8 +6,8 @@ using TMPro;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Puzzle : MonoBehaviour
 {
-    const int resolutionU = Constants.resolutionU;
-    const int resolutionV = Constants.resolutionV;
+    const int resolutionU = Constants.puzzleResolutionU;
+    const int resolutionV = Constants.puzzleResolutionV;
     [System.Flags]
     public enum GizmoMode { Nothing = 0, Vertices = 1, Normals = 0b10, Tangents = 0b100 }
 

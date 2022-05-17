@@ -1,25 +1,15 @@
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Unity.Mathematics;
-using System.Runtime.InteropServices;
-
 using static Unity.Mathematics.math;
+
+using Vertex = Utils.Vertex;
 
 public class SingleStreamCylindricalProceduralMesh
 {
-    const int resolutionU = Constants.resolutionU;
-    const int resolutionV = Constants.resolutionV;
+    const int resolutionU = Constants.puzzleResolutionU;
+    const int resolutionV = Constants.puzzleResolutionV;
     private MeshFilter meshFilter;
-
-    [StructLayout(LayoutKind.Sequential)]
-    struct Vertex
-    {
-        public float3 position, normal;
-        public half4 tangent;
-        public half2 texCoord0;
-    }
-    // number of sections
 
     // dimensions of the generated shape
     private const float radius = 0.5f;

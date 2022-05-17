@@ -10,7 +10,6 @@ public class InfoBoardHandler : MonoBehaviour
     GameObject infoPanel;
     private TextMeshProUGUI infoTextObject;
 
-    // Start is called before the first frame update
     void Start()
     {
         infoTextObject = infoPanel.GetComponentInChildren<TextMeshProUGUI>(true);
@@ -29,11 +28,5 @@ public class InfoBoardHandler : MonoBehaviour
         {
             infoPanel.SetActive(false);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

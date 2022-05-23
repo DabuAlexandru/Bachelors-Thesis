@@ -18,9 +18,7 @@ public class MapGenerator : MonoBehaviour {
 	public int seed;
 	public float meshHeightMultiplier;
 	public AnimationCurve meshHeightCurve;
-	[Range(0.001f, 1.999f)]
-	public float exponent;
-
+	
 	[Header("Perlin")]
 	[Range(1f, 100f)]
 	public float noiseScale;
@@ -50,13 +48,16 @@ public class MapGenerator : MonoBehaviour {
 
 	public void GenerateMap() {
 		float[,] noiseMap = GenerateNoiseMap();
+		noiseMap = Noise.ApplyCurve(noiseMap, meshHeightCurve);
 
 		MapDisplay display = FindObjectOfType<MapDisplay> ();
 		if (drawMode == DrawMode.NoiseMap) {
 			display.DrawTexture (TextureGenerator.TextureFromHeightMap(noiseMap));
 		}
 		else if (drawMode == DrawMode.Mesh) {
-			display.DrawMesh (TerrainMeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, levelOfDetail));
+			display.DrawMesh (
+				TerrainMeshGenerator.GenerateTerrainMesh(noiseMap, levelOfDetail, meshHeightMultiplier)
+			);
 		}
 	}
 
@@ -77,7 +78,8 @@ public class MapGenerator : MonoBehaviour {
 		return PerlinNoise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
 	}
 
-	void OnValidate() {
+	void OnValidate() 
+	{
 		if (lacunarity < 1) {
 			lacunarity = 1;
 		}
@@ -93,4 +95,6 @@ public class MapGenerator : MonoBehaviour {
 			cellDensity = 2000;
 		}
 	}
+
+	private void OnEnable() => GenerateMap();
 }

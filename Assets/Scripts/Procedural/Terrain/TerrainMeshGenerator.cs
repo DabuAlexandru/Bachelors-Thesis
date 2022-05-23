@@ -7,7 +7,7 @@ using Vertex = Utils.Vertex;
 
 public static class TerrainMeshGenerator
 {
-    public static Mesh GenerateTerrainMesh(float[,] heightMap, float meshHeightMultiplier, int levelOfDetail) {
+    public static ProceduralPlaneMesh GenerateTerrainMesh(float[,] heightMap, int levelOfDetail = 0, float meshHeightMultiplier = 1.0f) {
         int resolution = heightMap.GetLength(0) - 1;
 
         int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
@@ -23,7 +23,7 @@ public static class TerrainMeshGenerator
         }
         ProceduralPlaneMesh procPlaneMesh = new ProceduralPlaneMesh(modifiedResolution);
         procPlaneMesh.ApplyHeightMap(rescaledHeightMap, meshHeightMultiplier);
-        return procPlaneMesh.GetMesh();
+        return procPlaneMesh;
     }
 }
 

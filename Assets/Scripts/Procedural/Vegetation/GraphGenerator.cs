@@ -47,11 +47,6 @@ public static class GraphGenerator
         return branches;
     }
 
-    private static string Vector3ToString(Vector3 myVector)
-    {
-        return myVector.ToString("F4");
-    }
-
     private static Vector3 CalculateBezierControlPoint(BranchGraphNode graphNode)
     {
         float p = Random.Range(0.5f - bezierPointVariation, 0.5f + bezierPointVariation);
@@ -79,7 +74,7 @@ public static class GraphGenerator
         }
         else
         {
-            newNode.budPosition = parent.GetPointLinear(0.5f);
+            newNode.budPosition = parent.GetPointLinear(0.75f);
             float variationY = Random.Range(0.1f, 360.0f);
             newNode.growthDirection = 
                 Quaternion.Euler(branchSeparationAngle, variationY, 0.0f) *

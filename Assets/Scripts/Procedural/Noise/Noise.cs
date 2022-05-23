@@ -31,10 +31,23 @@ public static class Noise {
 		return smoothedMap;
 	}
 
+	public static float[,] ApplyCurve(float[,] heightMap, AnimationCurve meshHeightCurve)
+	{
+		int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
+		for(int i = 0; i < mapWidth; i++)
+		{
+			for(int j = 0; j < mapHeight; j++)
+			{
+				heightMap[i, j] = meshHeightCurve.Evaluate(heightMap[i, j]);
+			}
+		}
+		return heightMap;
+	}
+
 	public static float[,] GetNormalizedHeightMap(float[,] noiseGrid)
 	{
 		int mapWidth = noiseGrid.GetLength(0), mapHeight = noiseGrid.GetLength(1);
-		return GetNormalizedHeightMap(mapWidth, mapHeight, noiseGrid);
+		return GetNormalizedHeightMap(mapWidth - 1, mapHeight - 1, noiseGrid);
 	}
 
 	public static float[,] GetNormalizedHeightMap(int mapWidth, int mapHeight, float[,] noiseGrid)

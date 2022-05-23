@@ -134,7 +134,7 @@ public class ProceduralPlaneMesh
 
     public Mesh GetMesh() => this.planeMesh;
 
-    public void ApplyHeightMap(float[,] heightMap, float amplitude)
+    public void ApplyHeightMap(float[,] heightMap, float amplitude = 1.0f)
     {
         Vector3[] myVertices = planeMesh.vertices;
         int vi = 0;
@@ -150,5 +150,21 @@ public class ProceduralPlaneMesh
         planeMesh.vertices = myVertices;
         planeMesh.RecalculateNormals();
         planeMesh.RecalculateBounds();
+    }
+
+    public float[,] ExtractHeightMap()
+    {
+        Vector3[] myVertices = planeMesh.vertices;
+        float[,] heightMap = new float[resolution + 1, resolution + 1];
+        int vi = 0;
+        for(int v = 0; v <= resolution; v++)
+        {
+            for(int u = 0; u <= resolution; u++)
+            {
+                heightMap[u, v] = myVertices[vi].y;
+                vi++;
+            }
+        }
+        return Noise.GetNormalizedHeightMap(heightMap);
     }
 }

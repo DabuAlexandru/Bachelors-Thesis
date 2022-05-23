@@ -6,6 +6,7 @@ public static class CombinedNoise
         int mapWidth, int mapHeight, int seed, 
         int cellDensity, float c1, float c2,
         float displacementRange = 1.0f, float displacementReductionRate = 2.0f,
+        float perturbation = 0.25f, int filterFlag = 1,
         float voronoiBias = 0.333f, int smoothFilterSize = 0)
     {
         float[,] diSqNoise = DiamondSquareNoise.GenerateNoiseMap(mapWidth, mapHeight, seed, displacementRange, displacementReductionRate, smoothFilterSize);
@@ -18,11 +19,9 @@ public static class CombinedNoise
             {
                 // we add some perlin noise over to give it a more random look
                 noiseMap[i, j] = (1 - voronoiBias) * diSqNoise[i, j] + voronoiBias * vrnNoise[i, j];
-                // apply a perturbation filter
-                noiseMap[i, j] = ((0.3f * (Mathf.PerlinNoise(i, j) * 0.75f - 0.25f)) + noiseMap[i, j]) / 1.3f;
             }
         }
-
-        return noiseMap;
+        float[,] perturbatedMap = Noise.GetHeightMapWithPerturbation(noiseMap, perturbation, filterFlag);
+        return Noise.GetSmoothedNoiseMap(perturbatedMap, 1);
     }
 }

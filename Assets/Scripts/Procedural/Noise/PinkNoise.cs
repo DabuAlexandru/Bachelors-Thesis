@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class PinkNoise {
 
-	public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset) {
+	public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistence, float lacunarity, Vector2 offset) {
 		float[,] noiseMap = new float[(mapWidth + 1),(mapHeight + 1)];
 
 		System.Random prng = new System.Random (seed);
@@ -38,7 +38,7 @@ public static class PinkNoise {
 					float noiseValue = Random.Range(0.0f, 1.0f) * 2 - 1;
 					noiseHeight += noiseValue * amplitude;
 
-					amplitude *= persistance;
+					amplitude *= persistence;
 					frequency *= lacunarity;
 				}
 

@@ -5,46 +5,50 @@ using NoiseFunction = Constants.NoiseFunction;
 
 public class MapGenerator : MonoBehaviour {
 
-	public enum DrawMode {NoiseMap, Mesh};
-	public DrawMode drawMode;
+	enum DrawMode {NoiseMap, Mesh};
+	[SerializeField] DrawMode drawMode;
 
-	public NoiseFunction noiseFunction;
+	[SerializeField] NoiseFunction noiseFunction;
 
 	const int mapChunkSize = 240;
 
 	[Header("General")]
 	[Range(0, 6)]
-	public int levelOfDetail;
-	public int seed;
-	public float meshHeightMultiplier;
-	public AnimationCurve meshHeightCurve;
+	[SerializeField] int levelOfDetail;
+	[SerializeField] int seed;
+	[SerializeField] float meshHeightMultiplier;
+	[SerializeField] AnimationCurve meshHeightCurve;
 	
 	[Header("Perlin")]
 	[Range(1f, 100f)]
-	public float noiseScale;
+	[SerializeField] float noiseScale;
 	[Range(1, 10)]
-	public int octaves;
-	public float persistance;
+	[SerializeField] int octaves;
+	[SerializeField] float persistence;
 	[Range(1, 5)]
-	public float lacunarity;
-	public Vector2 offset;
+	[SerializeField] float lacunarity;
+	[SerializeField] Vector2 offset;
 
 	[Header("Diamond-Square")]
-	public float randRange;
-	public float reductionRate;
+	[Range(0.0001f, 100.0f)]
+	[SerializeField] float randRange;
+	[Range(0.0001f, 10.0f)]
+	[SerializeField] float reductionRate;
 
 	[Header("Voronoi")]
-	public int cellDensity = 2;
-	public int c1 = 0;
-	public int c2 = 0;
+	[SerializeField] int cellDensity = 2;
+	[SerializeField] int c1 = 0;
+	[SerializeField] int c2 = 0;
 	
 	[Header("Combined")]
 	[Range(0.0f, 1.0f)]
-	public float perturbation = 0.25f;
+	[SerializeField] float perturbation = 0.25f;
 	[Range(0, 2)]
-	public int filterFlag = 1;
+	[SerializeField] int filterFlag = 1;
 
-	public bool autoUpdate;
+	[SerializeField] bool autoUpdate;
+
+	public bool ShouldAutoUpdate() => autoUpdate;
 
 	public void GenerateMap() {
 		float[,] noiseMap = GenerateNoiseMap();
@@ -75,7 +79,7 @@ public class MapGenerator : MonoBehaviour {
 		{
 			return CombinedNoise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, cellDensity, c1, c2, randRange, reductionRate, perturbation, filterFlag);
 		}
-		return PerlinNoise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
+		return PerlinNoise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistence, lacunarity, offset);
 	}
 
 	void OnValidate() 

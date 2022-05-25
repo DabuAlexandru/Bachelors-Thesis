@@ -2,7 +2,7 @@ using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-public class PersistanceManager
+public class PersistenceManager
 {
     public static void SaveData (string fileName, object dataToBeSaved)
     {

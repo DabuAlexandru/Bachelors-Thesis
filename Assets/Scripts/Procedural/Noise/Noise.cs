@@ -135,7 +135,7 @@ public static class Noise {
 				sampleY = (float)((j + offset.y) / scale * height - 0.5f);
 
 				int perturbationY = (int)Mathf.Floor(height * GetPerlinInterval(sampleX, sampleY, perturbation));
-				int newY = GetPositionWithFlag(j, perturbationY, height, filterFlag);
+				int newY = GetPositionWithFlag(j, perturbationX, height, filterFlag);
 
 				modifiedMap[i, j] = noiseMap[newX, newY];
 			}

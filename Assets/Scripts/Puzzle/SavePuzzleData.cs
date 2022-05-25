@@ -33,12 +33,12 @@ public class SavePuzzleData
 
     public PuzzleDictionary GetLoadedPuzzleData()
     {
-        return (PuzzleDictionary)PersistanceManager.LoadData(Constants.puzzleDataFile);
+        return (PuzzleDictionary)PersistenceManager.LoadData(Constants.puzzleDataFile);
     }
 
     public void SavePuzzleDataToFile()
     {
-        PersistanceManager.SaveData(Constants.puzzleDataFile, puzzleCollection);
+        PersistenceManager.SaveData(Constants.puzzleDataFile, puzzleCollection);
     }
 
     public PuzzleDictionary puzzleCollection;

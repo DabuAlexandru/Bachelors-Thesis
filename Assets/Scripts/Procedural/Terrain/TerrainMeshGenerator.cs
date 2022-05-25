@@ -134,6 +134,8 @@ public class ProceduralPlaneMesh
 
     public Mesh GetMesh() => this.planeMesh;
 
+    // public void ApplyHeightMapLOD(float[])
+
     public void ApplyHeightMap(float[,] heightMap, float amplitude = 1.0f)
     {
         Vector3[] myVertices = planeMesh.vertices;

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public static class DiamondSquareNoise
 {
-    private const float minHeight = -10.0f;
-    private const float maxHeight = 10.0f;
+    private const float minHeight = -1.0f;
+    private const float maxHeight = 1.0f;
     public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float displacementRange = 1.0f, float displacementReductionRate = 2.0f, int smoothFilterSize = 0)
     {
         float mapResolution = Mathf.Max(mapWidth, mapHeight); // the resolution of the noiseMap

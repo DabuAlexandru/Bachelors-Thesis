@@ -1,7 +1,7 @@
 using UnityEngine;
 
-public static class Noise {
-
+public static class Noise 
+{
 	public static float[,] GetSmoothedNoiseMap(float[,] noiseMap, int filterSize = 1)
 	{
 		int width = noiseMap.GetLength(0), height = noiseMap.GetLength(1);
@@ -142,6 +142,40 @@ public static class Noise {
 		}
 
 		return modifiedMap;
+	}
+
+	public static float[,] GenerateHeightMap(int width, int height, int seed, PerlinNoiseParams perlinParams)
+	{
+		return PerlinNoise.GenerateNoiseMap(
+			width, height, seed, 
+			perlinParams.NoiseScale, perlinParams.Octaves, perlinParams.Persistence, 
+			perlinParams.Lacunarity, perlinParams.Offset
+		);
+	}
+
+	public static float[,] GenerateHeightMap(int width, int height, int seed, DiamondSquareNoiseParams diamondParams)
+	{
+		return DiamondSquareNoise.GenerateNoiseMap(
+			width, height, seed, diamondParams.RandRange, diamondParams.ReductionRate
+		);
+	}
+
+	public static float[,] GenerateHeightMap(int width, int height, int seed, VoronoiDiagramParams voronoiParams)
+	{
+		return Voronoi.GenerateNoiseMap(
+			width, height, seed, voronoiParams.CellDensity, voronoiParams.C1, voronoiParams.C2
+		);
+	}
+
+	public static float[,] GenerateHeightMap(int width, int height, int seed, 
+		CombinedNoiseParams combinedParams, DiamondSquareNoiseParams diamondParams, VoronoiDiagramParams voronoiParams)
+	{
+		return CombinedNoise.GenerateNoiseMap(
+			width, height, seed,
+			voronoiParams.CellDensity, voronoiParams.C1, voronoiParams.C2, 
+			diamondParams.RandRange, diamondParams.ReductionRate, 
+			combinedParams.Perturbation, combinedParams.FilterFlag
+		);
 	}
 
 }

@@ -23,7 +23,7 @@ public class GeneralNoiseParams
 [System.Serializable]
 public class PerlinNoiseParams
 {
-	[Range(1f, 300f)]
+	[Range(1f, 100f)]
 	[SerializeField] float noiseScale;
 	public float NoiseScale { get => noiseScale; }
 
@@ -90,6 +90,8 @@ public class MapGenerator : MonoBehaviour {
 	[SerializeReference] Material terrainMaterial;
 
 	const int mapChunkSize = 240;
+	const int islandChunkSize = 120;
+	const int islandChunkCount = 4;
 
 	[SerializeField] GeneralNoiseParams generalNoiseParams;
 	
@@ -119,7 +121,7 @@ public class MapGenerator : MonoBehaviour {
 			);
 		}
 		else if (drawMode == DrawMode.Island) {
-			IslandGenerator.GenerateIsland(3, mapChunkSize, generalNoiseParams, perlinNoiseParams, diamondSquareNoiseParams, voronoiDiagramParams, combinedNoiseParams, noiseFunction, terrainMaterial);
+			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, generalNoiseParams, perlinNoiseParams, diamondSquareNoiseParams, voronoiDiagramParams, combinedNoiseParams, noiseFunction, terrainMaterial);
 		}
 	}
 

@@ -25,6 +25,54 @@ public static class TerrainMeshGenerator
         procPlaneMesh.ApplyHeightMap(rescaledHeightMap, meshHeightMultiplier);
         return procPlaneMesh;
     }
+
+    public static Vector3[,] GetNormalsFromHeightMap(float[,] heightMap, int chunkResolution, float meshHeightMultiplier = 1.0f)
+    {
+        int resolution = heightMap.GetLength(0) - 1;
+        Vector3[,] vertexNormals = new Vector3[resolution + 1, resolution + 1];
+
+        // Debug.Log("BROKEN ONE");
+
+        for(int v = 0; v < resolution; v++)
+        {
+            for(int u = 0; u < resolution; u++)
+            {
+                float x1 = (float)u / chunkResolution - 0.5f;
+                float x2 = (float)(u + 1) / chunkResolution - 0.5f;
+                float z1 = (float)v / chunkResolution - 0.5f;
+                float z2 = (float)(v + 1) / chunkResolution - 0.5f;
+
+                Vector3 vertexA = new Vector3(x1, heightMap[u, v] * meshHeightMultiplier, z1);
+                Vector3 vertexB = new Vector3(x2, heightMap[u + 1, v] * meshHeightMultiplier, z1);
+                Vector3 vertexC = new Vector3(x2, heightMap[u + 1, v + 1] * meshHeightMultiplier, z2);
+                Vector3 vertexD = new Vector3(x1, heightMap[u, v + 1] * meshHeightMultiplier, z2);
+
+                Vector3 triangleACBNormal = CalculateSurfaceNormal(vertexA, vertexC, vertexB);
+                Vector3 triangleADCNormal = CalculateSurfaceNormal(vertexA, vertexD, vertexC);
+
+                vertexNormals[u, v] += triangleACBNormal + triangleADCNormal; // A
+                vertexNormals[u + 1, v] += triangleACBNormal; // B
+                vertexNormals[u + 1, v + 1] += triangleACBNormal + triangleADCNormal; // C
+                vertexNormals[u, v + 1] += triangleADCNormal; // D
+            }
+        }
+        for(int v = 0; v <= resolution; v++)
+        {
+            for(int u = 0; u <= resolution; u++)
+            {
+                vertexNormals[u, v].Normalize();
+            }
+        }
+
+        return vertexNormals;
+    }
+
+    private static Vector3 CalculateSurfaceNormal(Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
+    {
+        Vector3 edge12 = vertex2 - vertex1;
+        Vector3 edge13 = vertex3 - vertex1;
+        return Vector3.Cross(edge12, edge13).normalized;
+    }
 }
 
 public class ProceduralPlaneMesh 
@@ -131,6 +179,8 @@ public class ProceduralPlaneMesh
 
         Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, planeMesh);
     }
+
+    public void SetNormals(Vector3[] normals) => this.planeMesh.normals = normals;
 
     public Mesh GetMesh() => this.planeMesh;
 

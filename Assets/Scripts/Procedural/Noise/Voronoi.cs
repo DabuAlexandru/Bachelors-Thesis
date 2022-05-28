@@ -40,43 +40,28 @@ public static class Voronoi
         {
             for (int y = 0; y <= resolution; y++)
             {
-                int cellIndex = (x / cellSize) * cellDensity + (y / cellSize);
-                voronoiMap[x, y] = GetHeightAtPoint(new Vector2(x, y), featurePoints, cellDensity, cellIndex, c1, c2);
+                Vector2 cellCoords = new Vector2(x / cellSize, y / cellSize);
+                voronoiMap[x, y] = GetHeightAtPoint(new Vector2(x, y), featurePoints, cellDensity, cellCoords, c1, c2);
             }
         }
 
         return voronoiMap;
     }
 
-    private static float GetHeightAtPoint(Vector2 currentPoint, Vector2[] featurePoints, int cellDensity, int cellIndex, float c1, float c2)
+    private static float GetHeightAtPoint(Vector2 currentPoint, Vector2[] featurePoints, int cellDensity, Vector2 cellCoords, float c1, float c2)
     {
-        /* the sliding window - we verifiy for y and each of it's neighbours - we exlude all the cells out of bounds
-            . . . . . .
-            . x x x o .
-            . x y x o .
-            . x x x o .
-            . o o o o .
-            . . . . . .
-        */
         Vector2 d = new Vector2(0.0f, 0.0f);
-        // top left index of the window
-        int firstIndex = cellIndex - cellDensity - 1;
-        for (int i = 0; i < 3; i++)
+        int cx = (int)Mathf.Floor(cellCoords.x), cy = (int)Mathf.Floor(cellCoords.y);
+        for (int i = Mathf.Max(0, cx - 2); i < Mathf.Min(cellDensity, cx + 2); i++)
         {
-            int currentIndex = firstIndex + cellDensity * i;
-            // if the row of the sliding window is out of bounds, we check the next row
-            if(currentIndex < -1 || currentIndex >= cellDensity * cellDensity - 1)
-                continue;
-            for (int j = 0; j < 3; j++)
+            for (int j = Mathf.Max(0, cy - 2); j < Mathf.Min(cellDensity, cy + 2); j++)
             {
-                int index = currentIndex + j;
-                // if the column of the sliding window is out of bounds, we check the next column
-                if((j == 0 && (index + 1) % cellDensity == 0) || (j == 2 && index % cellDensity == 0))
+                if((i == cx - 2 || i == cx + 2) && (j == cy - 2 || j == cy + 2))
                     continue;
+                int index = i * cellDensity + j;
                 for(int k = 0; k < numOfFeaturePointsPerCell; k++)
                 {
                     Vector2 featurePoint = featurePoints[index * numOfFeaturePointsPerCell + k];
-                    // float distance = Vector2.Distance(currentPoint, featurePoint);
                     float distance = SpcDistance(currentPoint, featurePoint); // proposed speed optimization
                     if(distance < d.x || d.x == 0.0f)
                     {

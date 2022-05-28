@@ -4,12 +4,12 @@ public static class DiamondSquareNoise
 {
     private const float minHeight = -1.0f;
     private const float maxHeight = 1.0f;
-    public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float displacementRange = 1.0f, float displacementReductionRate = 2.0f, int smoothFilterSize = 0)
+    public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float displacementRange = 1.0f, float persistence = 0.5f, int smoothFilterSize = 0)
     {
         float mapResolution = Mathf.Max(mapWidth, mapHeight); // the resolution of the noiseMap
         int exp = (int)Mathf.Ceil(Mathf.Log(mapResolution, 2)); // the exponent of the diamond-square grid (size: (2 ^ exp + 1) ^ 2)
 
-        float[,] noiseGrid = GenerateDiamondSquareGrid(exp, seed, displacementRange, displacementReductionRate);
+        float[,] noiseGrid = GenerateDiamondSquareGrid(exp, seed, displacementRange, persistence);
         if(smoothFilterSize > 1)
         {
             noiseGrid = Noise.GetSmoothedNoiseMap(noiseGrid, smoothFilterSize);
@@ -19,16 +19,16 @@ public static class DiamondSquareNoise
 
     private static int Modulo(int x, int m) => Constants.Modulo(x, m);
 
-    public static float[,] GenerateDiamondSquareGrid(int mapWidth, int mapHeight, int seed, float displacementRange = 1.0f, float displacementReductionRate = 2.0f)
+    public static float[,] GenerateDiamondSquareGrid(int mapWidth, int mapHeight, int seed, float displacementRange = 1.0f, float persistence = 0.5f)
     {
         float mapResolution = Mathf.Max(mapWidth, mapHeight); // the resolution of the noiseMap
         int exp = (int)Mathf.Ceil(Mathf.Log(mapResolution, 2)); // the exponent of the diamond-square grid (size: (2 ^ exp + 1) ^ 2)
 
-        float[,] noiseGrid = GenerateDiamondSquareGrid(exp, seed, displacementRange, displacementReductionRate);
+        float[,] noiseGrid = GenerateDiamondSquareGrid(exp, seed, displacementRange, persistence);
         return noiseGrid;
     }
 
-    public static float[,] GenerateDiamondSquareGrid(int exp, int seed, float displacementRange = 1.0f, float displacementReductionRate = 2.0f)
+    public static float[,] GenerateDiamondSquareGrid(int exp, int seed, float displacementRange = 1.0f, float persistence = 0.5f)
     {
         Random.InitState(seed);
         float[] initialRange = { minHeight, maxHeight };
@@ -89,20 +89,14 @@ public static class DiamondSquareNoise
                         avg += grid[x + halfSize, y];
                         count++;
                     }
-                    // float avg = (
-                    //         grid[Modulo(x - halfSize, resolution + 1), y] +
-                    //         grid[x, Modulo(y - halfSize, resolution + 1)] +
-                    //         grid[x, Modulo(y + halfSize, resolution + 1)] +
-                    //         grid[Modulo(x + halfSize, resolution + 1), y]
-                    //     ) / 4.0f;
                     avg /= count;
                     float offset = Random.Range(-Mathf.Abs(displacementRange), Mathf.Abs(displacementRange));
                     grid[x, y] = avg + offset;
                 }
             }
 
-            windowSize /= 2;
-            displacementRange = Mathf.Max(displacementRange / displacementReductionRate, 0.1f);
+            windowSize = (int)Mathf.Floor(windowSize * 0.5f);
+            displacementRange = Mathf.Max(displacementRange * persistence, 0.1f);
         }
 
         return grid;

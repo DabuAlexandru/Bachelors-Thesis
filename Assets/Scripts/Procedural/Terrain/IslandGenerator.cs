@@ -9,49 +9,51 @@ public static class IslandGenerator
     private static ProceduralPlaneMesh[,] terrainChunks;
     private static GameObject[,] islandChunkObjects;
     private static GameObject island;
+    // private static 
 
-    public static void GenerateIsland(int resolution, int mapChunkSize, GeneralNoiseParams generalNoiseParams,
-        PerlinNoiseParams perlinNoiseParams, DiamondSquareNoiseParams diamondSquareNoiseParams,
-        VoronoiDiagramParams voronoiDiagramParams, CombinedNoiseParams combinedNoiseParams,
-        NoiseFunction noiseFunction, Material terrainMaterial
+    public static void GenerateIsland(int resolution, int mapChunkSize, NoiseSettings noiseSettings,
+        NoiseFunction noiseFunction, Material terrainMaterial, Material treeMaterial
     )
     {
         IslandGenerator.resolution = resolution;
         IslandGenerator.mapChunkSize = mapChunkSize;
         IslandGenerator.terrainChunks = new ProceduralPlaneMesh[resolution, resolution];
-        int seed = generalNoiseParams.Seed;
+        int seed = noiseSettings.GeneralNoiseParams.Seed;
         int mapResolution = resolution * mapChunkSize;
 
         float[,] heightMap = new float[mapResolution + 1, mapResolution + 1];
         
         if(noiseFunction == NoiseFunction.Perlin)
         {
-            heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, perlinNoiseParams);
+            heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, noiseSettings.PerlinNoiseParams);
         }
         else if(noiseFunction == NoiseFunction.DiamondSquare)
 		{
-			heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, diamondSquareNoiseParams);
+			heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, noiseSettings.DiamondSquareNoiseParams);
 		}
 		else if(noiseFunction == NoiseFunction.Voronoi)
 		{
-			heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, voronoiDiagramParams);
+			heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, noiseSettings.VoronoiDiagramParams);
 		}
 		else if(noiseFunction == NoiseFunction.Combined)
 		{
 			heightMap = Noise.GenerateHeightMap(mapResolution, mapResolution, seed, 
-				combinedNoiseParams, diamondSquareNoiseParams, voronoiDiagramParams);
+				noiseSettings.CombinedNoiseParams, noiseSettings.DiamondSquareNoiseParams, noiseSettings.VoronoiDiagramParams);
 		}
+
+        AnimationCurve meshHeightCurve = noiseSettings.GeneralNoiseParams.MeshHeightCurve;
+        float meshHeightMultiplier = noiseSettings.GeneralNoiseParams.MeshHeightMultiplier;
         // modify the height map
         for(int v = 0; v <= mapResolution; v++)
         {
             for(int u = 0; u <= mapResolution; u++)
             {
-                heightMap[u, v] = generalNoiseParams.MeshHeightCurve.Evaluate(heightMap[u, v]);
+                heightMap[u, v] = meshHeightCurve.Evaluate(heightMap[u, v]);
                 heightMap[u, v] *= EvaluateShore((float) u / mapResolution, (float) v / mapResolution);
             }
         }
 
-        Vector3[,] vertexNormals = TerrainMeshGenerator.GetNormalsFromHeightMap(heightMap, mapChunkSize, generalNoiseParams.MeshHeightMultiplier);
+        Vector3[,] vertexNormals = TerrainMeshGenerator.GetNormalsFromHeightMap(heightMap, mapChunkSize, meshHeightMultiplier);
 
         float[,] chunkHeightMap = new float[mapChunkSize + 1, mapChunkSize + 1];
         for(int j = 0; j < resolution; j++)
@@ -73,7 +75,7 @@ public static class IslandGenerator
                         normalsIndex++;
                     }
                 }
-                terrainChunks[i, j] = TerrainMeshGenerator.GenerateTerrainMesh(chunkHeightMap, 0, generalNoiseParams.MeshHeightMultiplier);
+                terrainChunks[i, j] = TerrainMeshGenerator.GenerateTerrainMesh(chunkHeightMap, 0, meshHeightMultiplier);
                 terrainChunks[i, j].SetNormals(chunkVertexNormals);
             }
         }

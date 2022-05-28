@@ -31,8 +31,6 @@ public static class TerrainMeshGenerator
         int resolution = heightMap.GetLength(0) - 1;
         Vector3[,] vertexNormals = new Vector3[resolution + 1, resolution + 1];
 
-        // Debug.Log("BROKEN ONE");
-
         for(int v = 0; v < resolution; v++)
         {
             for(int u = 0; u < resolution; u++)

@@ -32,12 +32,17 @@ public class TreeGenerator : MonoBehaviour
         GameObject tree = new GameObject("Tree");
         tree.AddComponent<CapsuleCollider>();
         CapsuleCollider treeCollider = tree.GetComponent<CapsuleCollider>();
-        treeCollider.radius = baseRadius * 1.05f;
-        treeCollider.height = graphComplexity * 0.9f;
+
+        const float approximatedSegmentHeight = 0.9f;
+        const float radiusPercentOffset = 0.05f;
+
+        treeCollider.radius = baseRadius * (1f + radiusPercentOffset);
+        treeCollider.height = graphComplexity * approximatedSegmentHeight;
         treeCollider.center = Vector3.up * (treeCollider.height / 2.0f);
         tree.transform.SetParent(this.transform);
 
         CreateBranch(0, baseRadius, tree.transform);
+        // const float min
         for(int i = 0; i < rootBranchCount; i++)
         {
             int branchId = 2 * i + 1;

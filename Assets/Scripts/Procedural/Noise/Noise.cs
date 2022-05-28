@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using NoiseFunction = Constants.NoiseFunction;
+
 public static class Noise 
 {
 	public static float[,] GetSmoothedNoiseMap(float[,] noiseMap, int filterSize = 1)
@@ -34,9 +36,9 @@ public static class Noise
 	public static float[,] ApplyCurve(float[,] heightMap, AnimationCurve meshHeightCurve)
 	{
 		int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
-		for(int i = 0; i < mapWidth; i++)
+		for(int j = 0; j < mapHeight; j++)
 		{
-			for(int j = 0; j < mapHeight; j++)
+			for(int i = 0; i < mapWidth; i++)
 			{
 				heightMap[i, j] = meshHeightCurve.Evaluate(heightMap[i, j]);
 			}
@@ -156,7 +158,7 @@ public static class Noise
 	public static float[,] GenerateHeightMap(int width, int height, int seed, DiamondSquareNoiseParams diamondParams)
 	{
 		return DiamondSquareNoise.GenerateNoiseMap(
-			width, height, seed, diamondParams.RandRange, diamondParams.ReductionRate
+			width, height, seed, diamondParams.RandRange, diamondParams.Persistence
 		);
 	}
 
@@ -173,9 +175,29 @@ public static class Noise
 		return CombinedNoise.GenerateNoiseMap(
 			width, height, seed,
 			voronoiParams.CellDensity, voronoiParams.C1, voronoiParams.C2, 
-			diamondParams.RandRange, diamondParams.ReductionRate, 
+			diamondParams.RandRange, diamondParams.Persistence, 
 			combinedParams.Perturbation, combinedParams.FilterFlag
 		);
+	}
+
+	public static float[,] GenerateHeightMap(int width, int height, NoiseFunction noiseFunction, NoiseSettings noiseSettings)
+	{
+		int seed = noiseSettings.GeneralNoiseParams.Seed;
+		if(noiseFunction == NoiseFunction.DiamondSquare)
+		{
+			return Noise.GenerateHeightMap(width, height, seed, noiseSettings.DiamondSquareNoiseParams);
+		}
+		else if(noiseFunction == NoiseFunction.Voronoi)
+		{
+			return Noise.GenerateHeightMap(width, height, seed, noiseSettings.VoronoiDiagramParams);
+		}
+		else if(noiseFunction == NoiseFunction.Combined)
+		{
+			return Noise.GenerateHeightMap(width, height, seed, 
+				noiseSettings.CombinedNoiseParams, noiseSettings.DiamondSquareNoiseParams, noiseSettings.VoronoiDiagramParams);
+		}
+		return Noise.GenerateHeightMap(width, height, seed, noiseSettings.PerlinNoiseParams);
+
 	}
 
 }

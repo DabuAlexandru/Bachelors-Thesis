@@ -45,13 +45,13 @@ public class PerlinNoiseParams
 [System.Serializable]
 public class DiamondSquareNoiseParams
 {
-	[Range(0.0001f, 100.0f)]
+	[Range(0f, 100.0f)]
 	[SerializeField] float randRange;
 	public float RandRange { get => randRange; }
 
-	[Range(0.0001f, 10.0f)]
-	[SerializeField] float reductionRate;
-	public float ReductionRate { get => reductionRate; }
+	[Range(0.0001f, 1.0f)]
+	[SerializeField] float persistence;
+	public float Persistence { get => persistence; }
 }
 
 [System.Serializable]
@@ -80,6 +80,25 @@ public class CombinedNoiseParams
 	public int FilterFlag { get => filterFlag; }
 }
 
+[System.Serializable]
+public class NoiseSettings
+{
+	[SerializeField] GeneralNoiseParams generalNoiseParams;
+	public GeneralNoiseParams GeneralNoiseParams { get => generalNoiseParams; }
+	
+	[SerializeField] PerlinNoiseParams perlinNoiseParams;
+	public PerlinNoiseParams PerlinNoiseParams { get => perlinNoiseParams; }
+
+	[SerializeField] DiamondSquareNoiseParams diamondSquareNoiseParams;
+	public DiamondSquareNoiseParams DiamondSquareNoiseParams { get => diamondSquareNoiseParams; }
+
+	[SerializeField] VoronoiDiagramParams voronoiDiagramParams;
+	public VoronoiDiagramParams VoronoiDiagramParams { get => voronoiDiagramParams; }
+	
+	[SerializeField] CombinedNoiseParams combinedNoiseParams;
+	public CombinedNoiseParams CombinedNoiseParams { get => combinedNoiseParams; }
+}
+
 public class MapGenerator : MonoBehaviour {
 
 	enum DrawMode {NoiseMap, Mesh, Island};
@@ -89,27 +108,22 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeReference] Material terrainMaterial;
 
+	[SerializeReference] Material treeMaterial;
+
 	const int mapChunkSize = 240;
 	const int islandChunkSize = 120;
-	const int islandChunkCount = 4;
+	const int islandChunkCount = 2;
 
-	[SerializeField] GeneralNoiseParams generalNoiseParams;
-	
-	[SerializeField] PerlinNoiseParams perlinNoiseParams;
-
-	[SerializeField] DiamondSquareNoiseParams diamondSquareNoiseParams;
-
-	[SerializeField] VoronoiDiagramParams voronoiDiagramParams;
-	
-	[SerializeField] CombinedNoiseParams combinedNoiseParams;
+	[SerializeField] NoiseSettings noiseSettings;
 
 	[SerializeField] bool autoUpdate;
 
 	public bool ShouldAutoUpdate() => autoUpdate;
 
 	public void GenerateMap() {
-		float[,] noiseMap = GenerateNoiseMap();
-		noiseMap = Noise.ApplyCurve(noiseMap, generalNoiseParams.MeshHeightCurve);
+		float[,] noiseMap = Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, noiseFunction, noiseSettings);
+		AnimationCurve meshHeightCurve = noiseSettings.GeneralNoiseParams.MeshHeightCurve;
+		noiseMap = Noise.ApplyCurve(noiseMap, meshHeightCurve);
 
 		MapDisplay display = FindObjectOfType<MapDisplay> ();
 		if (drawMode == DrawMode.NoiseMap) {
@@ -117,31 +131,31 @@ public class MapGenerator : MonoBehaviour {
 		}
 		else if (drawMode == DrawMode.Mesh) {
 			display.DrawMesh (
-				TerrainMeshGenerator.GenerateTerrainMesh(noiseMap, generalNoiseParams.LevelOfDetail, generalNoiseParams.MeshHeightMultiplier)
+				TerrainMeshGenerator.GenerateTerrainMesh(noiseMap, noiseSettings.GeneralNoiseParams.LevelOfDetail, noiseSettings.GeneralNoiseParams.MeshHeightMultiplier)
 			);
 		}
 		else if (drawMode == DrawMode.Island) {
-			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, generalNoiseParams, perlinNoiseParams, diamondSquareNoiseParams, voronoiDiagramParams, combinedNoiseParams, noiseFunction, terrainMaterial);
+			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, noiseFunction, terrainMaterial, treeMaterial);
 		}
 	}
 
 	private float[,] GenerateNoiseMap()
 	{
-		int seed = generalNoiseParams.Seed;
+		int seed = noiseSettings.GeneralNoiseParams.Seed;
 		if(noiseFunction == NoiseFunction.DiamondSquare)
 		{
-			return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, diamondSquareNoiseParams);
+			return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, noiseSettings.DiamondSquareNoiseParams);
 		}
 		else if(noiseFunction == NoiseFunction.Voronoi)
 		{
-			return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, voronoiDiagramParams);
+			return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, noiseSettings.VoronoiDiagramParams);
 		}
 		else if(noiseFunction == NoiseFunction.Combined)
 		{
 			return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, 
-				combinedNoiseParams, diamondSquareNoiseParams, voronoiDiagramParams);
+				noiseSettings.CombinedNoiseParams, noiseSettings.DiamondSquareNoiseParams, noiseSettings.VoronoiDiagramParams);
 		}
-		return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, perlinNoiseParams);
+		return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, noiseSettings.PerlinNoiseParams);
 	}
 
 	private void OnEnable() => GenerateMap();

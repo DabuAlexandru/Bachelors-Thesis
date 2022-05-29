@@ -88,7 +88,7 @@ public static class IslandGenerator
     {
         const float a = 0.25f, b = 0.7f;
         const float vMax = 0.4f, vMin = -0.15f;
-        float circleValue = Mathf.Clamp(-RoundedSquare(x, y, a, b), vMin, vMax);
+        float circleValue = Mathf.Clamp(RoundedSquare(x, y, a, b), vMin, vMax);
         return Mathf.Pow((circleValue - vMin) / (vMax - vMin), 2f);
     }
 
@@ -96,7 +96,7 @@ public static class IslandGenerator
     {
         float u = Mathf.Pow(Mathf.Max(Mathf.Abs(2 * x - 1) - a, 0f), 2.0f);
         float v = Mathf.Pow(Mathf.Max(Mathf.Abs(2 * y - 1) - a, 0f), 2.0f);
-        return u + v - b * b;
+        return b * b - (u + v);
     }
 
     private static void InitializeIslandObject(Material terrainMaterial)
@@ -122,7 +122,10 @@ public static class IslandGenerator
             }
         }
         island.transform.localScale = new Vector3(mapChunkSize, 1.0f, mapChunkSize);
-    }   
+    }
+
+    private static Vector3 FromHeightMapToWorldCoords(float px, float height, float pz) 
+        => new Vector3((px - 0.5f) * resolution * mapChunkSize, height, (pz - 0.5f) * resolution * mapChunkSize);
 
     private static void UpdateChunkMeshes()
     {

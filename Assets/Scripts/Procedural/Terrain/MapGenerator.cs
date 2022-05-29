@@ -112,7 +112,7 @@ public class MapGenerator : MonoBehaviour {
 
 	const int mapChunkSize = 240;
 	const int islandChunkSize = 120;
-	const int islandChunkCount = 2;
+	const int islandChunkCount = 4;
 
 	[SerializeField] NoiseSettings noiseSettings;
 

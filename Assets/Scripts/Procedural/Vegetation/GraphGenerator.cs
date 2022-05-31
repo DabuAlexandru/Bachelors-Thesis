@@ -17,13 +17,13 @@ public struct BranchGraphNode
 
     /** Get a point on the branch by the percentage of the distance from the bud **/
     public Vector3 GetPointLinear(float p = 1.0f) => (budPosition + growthDirection * length * p);
-    public Vector3 GetPointBezier(float t) => Utils.GetPointOnQuadraticBezierCurve(budPosition, bezierControlPoint, GetPointLinear(), t);
+    public Vector3 GetPointBezier(float t = 1.0f) => Utils.GetPointOnQuadraticBezierCurve(budPosition, bezierControlPoint, GetPointLinear(), t);
 }
 
 public static class GraphGenerator
 {
     private const float branchSeparationAngle = 40.0f; // the angle of separation from the main branch
-    private const float rotationVariationAngle = 20.0f; // offset on the rotation angle to have some variation
+    private const float rotationVariationAngle = 40.0f; // offset on the rotation angle to have some variation
     private const float bezierHeight = 0.2f;
     private const float bezierPointVariation = 0.2f;
 
@@ -57,12 +57,15 @@ public static class GraphGenerator
         return localRotatedPoint + chosenPoint;
     }
 
-    static Vector3 ApplyRotationVariation(Vector3 direction)
+    private static Quaternion GetRotationVariation()
     {
         float variationX = Random.Range(-rotationVariationAngle / 2.0f, rotationVariationAngle / 2.0f);
         float variationZ = Random.Range(-rotationVariationAngle / 2.0f, rotationVariationAngle / 2.0f);
-        return Quaternion.Euler(variationX, 0.0f, variationZ) * direction;
+        return Quaternion.Euler(variationX, 0.0f, variationZ);
     }
+
+    static Vector3 ApplyRotationVariation(Vector3 direction) 
+        => Quaternion.FromToRotation(Vector3.one, direction) * GetRotationVariation() * Vector3.one;
 
     static BranchGraphNode GenerateBranchGraphNode(BranchGraphNode parent, bool expansion)
     {
@@ -75,8 +78,9 @@ public static class GraphGenerator
         else
         {
             newNode.budPosition = parent.GetPointLinear(0.75f);
-            float variationY = Random.Range(0.1f, 360.0f);
-            newNode.growthDirection = 
+            float variationY = Random.Range(0.001f, 360.0f);
+            newNode.growthDirection =
+                Quaternion.FromToRotation(Vector3.up, parent.growthDirection) *
                 Quaternion.Euler(branchSeparationAngle, variationY, 0.0f) *
                 ApplyRotationVariation(Vector3.up);
         }

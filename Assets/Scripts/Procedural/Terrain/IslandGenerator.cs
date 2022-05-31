@@ -80,7 +80,7 @@ public static class IslandGenerator
             }
         }
         if(island == null) 
-            InitializeIslandObject(terrainMaterial);
+            InitializeIslandObject(terrainMaterial, treeMaterial, heightMap, meshHeightMultiplier);
         UpdateChunkMeshes();
     }
 
@@ -99,7 +99,7 @@ public static class IslandGenerator
         return b * b - (u + v);
     }
 
-    private static void InitializeIslandObject(Material terrainMaterial)
+    private static void InitializeIslandObject(Material terrainMaterial, Material treeMaterial, float[,] heightMap, float meshHeightMultiplier)
     {
         island = new GameObject("Island");
         islandChunkObjects = new GameObject[resolution, resolution];
@@ -122,6 +122,33 @@ public static class IslandGenerator
             }
         }
         island.transform.localScale = new Vector3(mapChunkSize, 1.0f, mapChunkSize);
+
+        for(int j = 0; j < resolution; j++)
+        {
+            for(int i = 0; i < resolution; i++)
+            {
+                AddTreesToObject(islandChunkObjects[i, j], treeMaterial, i, j, heightMap, meshHeightMultiplier);
+            }
+        }
+    }
+
+    private static void AddTreesToObject(GameObject parent, Material treeMaterial, int i, int j, float[,] heightMap, float meshHeightMultiplier)
+    {
+        for(int u = 1; u < 5; u++)
+        {
+            for(int v = 1; v < 5; v++)
+            {
+                int gx = (int)Mathf.Floor((0.1f * u + i - resolution / 2) * mapChunkSize);
+                int gy = (int)Mathf.Floor((0.1f * v + j - resolution / 2) * mapChunkSize);
+
+                int hx = (int)Mathf.Floor((0.1f * u + i) * mapChunkSize);
+                int hy = (int)Mathf.Floor((0.1f * v + j) * mapChunkSize);
+
+                GameObject tree = new TreeEntity(treeMaterial).TreeObject;
+                tree.transform.position = new Vector3(gx, heightMap[hx, hy] * meshHeightMultiplier, gy);
+                tree.transform.SetParent(parent.transform);
+            }
+        }
     }
 
     private static Vector3 FromHeightMapToWorldCoords(float px, float height, float pz) 

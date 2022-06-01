@@ -2,10 +2,20 @@ using UnityEngine;
 using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
-public struct BranchMesh
+public struct BranchObject
 {
+    public MeshStruct branch;
+    public MeshStruct leaves;
+}
+
+public struct MeshStruct
+{
+    public Mesh mesh;
+
     public Vector3[] vertices;
-    public int[] indices;
+    public Vector3[] normals;
+    public Vector2[] uvs;
+    public int[] triangles;
 }
 
 public class TreeEntity
@@ -13,12 +23,75 @@ public class TreeEntity
     const int resolutionU = 12;
     const int resolutionV = 12;
 
+    private MeshStruct[] branchMeshes;
+
     private GameObject treeObject;
     public GameObject TreeObject { get => treeObject; }
 
     BranchGraphNode[] graph;
     Material treeMaterial;
-    const int graphComplexity = 5;
+    const int graphComplexity = 4;
+    const int maximumLOD = 3;
+
+    public void ModifyLODTree(int LOD = 0)
+    {
+        LOD = Mathf.Clamp(LOD, 0, maximumLOD);
+
+        for(int i = 0; i < branchMeshes.Length; i++)
+        {
+            ModifyLODBranch(i, LOD);
+        }
+    }
+
+    private void ModifyLODBranch(int branchIndex, int LOD = 0)
+    {
+        MeshStruct branchMeshStruct = branchMeshes[branchIndex];
+
+        Mesh branchMesh = branchMeshStruct.mesh;
+
+        int numOfVertices = branchMeshStruct.vertices.Length;
+
+        int resU = resolutionU;
+        int resV = numOfVertices / (resolutionU + 1) - 1; // we wielded together more branches
+        int vi = 0;
+
+        Vector3[] vertices = new Vector3[(resU + 1) * (resV + 1)];
+        Vector3[] normals = new Vector3[(resU + 1) * (resV + 1)];
+        Vector2[] uvs = new Vector2[(resU + 1) * (resV + 1)];
+
+        for(int v = 0; v <= resV; v += (LOD + 1))
+        {
+            for(int u = 0; u <= resU; u += (LOD + 1))
+            {
+                int globalVi = v * (resU + 1) + u;
+                vertices[vi] = branchMeshStruct.vertices[globalVi];
+                normals[vi] = branchMeshStruct.normals[globalVi];
+                uvs[vi] = branchMeshStruct.uvs[globalVi];
+                vi++;
+            }
+        }
+        int[] triangles = GetTrianglesFromCylinder(resU / (LOD + 1), resV / (LOD + 1));
+
+        branchMesh.vertices = vertices;
+        branchMesh.normals = normals;
+        branchMesh.uv = uvs;
+        branchMesh.triangles = triangles;
+    }
+
+    private int[] GetTrianglesFromCylinder(int resU, int resV)
+    {
+        int[] triangles = new int[6 * resU * resV];
+        int ti = 0;
+        for(int v = 0; v < resV; v++)
+        {
+            for(int u = 0; u < resU; u++)
+            {
+                CalculateTriangles(triangles, ti, u, v, resU);
+                ti += 6;
+            }
+        }
+        return triangles;
+    }
 
     public TreeEntity(Material treeMaterial)
     {
@@ -30,10 +103,12 @@ public class TreeEntity
     private void InitializeTreeObject()
     {
         int n = graph.Length;
-		int rootBranchIndex = 1; // the starting point of a branch formed by multiple segments
-        BranchMesh branch = GetMainBranchMesh(rootBranchIndex, 0.2f);
+		// int rootBranchIndex = 1; // the starting point of a branch formed by multiple segments
+        // MeshStruct branch = GetMainBranchMesh(rootBranchIndex, 0.2f);
         int rootBranchCount = (int)Mathf.Pow(2, graphComplexity - 1);
-        float baseRadius = graphComplexity * 0.035f;
+        // float baseRadius = graphComplexity * 0.035f;
+        float baseRadius = 0.175f;
+        float baseRadiusReductionRate = 0.7f;
 
         treeObject = new GameObject("Tree");
         treeObject.AddComponent<CapsuleCollider>();
@@ -46,21 +121,23 @@ public class TreeEntity
         treeCollider.height = graphComplexity * approximatedSegmentHeight;
         treeCollider.center = Vector3.up * (treeCollider.height / 2.0f);
 
-        CreateBranch(0, baseRadius, treeObject.transform);
+        branchMeshes = new MeshStruct[rootBranchCount + 1];
+        branchMeshes[0] = CreateBranch(0, baseRadius, treeObject.transform);
         // const float min
         for(int i = 0; i < rootBranchCount; i++)
         {
             int branchId = 2 * i + 1;
-            float branchBaseRadius = baseRadius * (0.01f + 0.65f * (1.0f - ((float)i / (rootBranchCount + 1))));
-            CreateBranch(branchId, branchBaseRadius, treeObject.transform);
+            // float branchBaseRadius = baseRadius * (0.01f + 0.65f * (1.0f - ((float)i / (rootBranchCount + 1))));
+            float branchBaseRadius = baseRadius * Mathf.Pow(baseRadiusReductionRate, Mathf.Log(branchId, 2) + 1);
+            branchMeshes[i + 1] = CreateBranch(branchId, branchBaseRadius, treeObject.transform);
         }
     }
 
-    private void CreateBranch(int rootBranchIndex, float baseRadius, Transform parent)
+    private MeshStruct CreateBranch(int rootBranchIndex, float baseRadius, Transform parent)
     {
-        BranchMesh branch = GetMainBranchMesh(rootBranchIndex, baseRadius);
+        MeshStruct branch = GetMainBranchMesh(rootBranchIndex, baseRadius);
 
-        GameObject newBranch = new GameObject("Branch" + rootBranchIndex);
+        GameObject newBranch = new GameObject("Branch" + (int)((rootBranchIndex - 1) / 2));
         newBranch.AddComponent<MeshFilter>();
         newBranch.AddComponent<MeshRenderer>();
 
@@ -71,13 +148,19 @@ public class TreeEntity
         Mesh branchMesh = newBranch.GetComponent<MeshFilter>().sharedMesh;
         branchMesh = new Mesh();
         branchMesh.vertices = branch.vertices;
-        branchMesh.triangles = branch.indices;
+        branchMesh.triangles = branch.triangles;
     
         CalculateUVs(branchMesh);
         RecalculateNormals(branchMesh);
         // branchMesh.RecalculateNormals();
 
+        branch.mesh = branchMesh;
+        branch.normals = branchMesh.normals;
+        branch.uvs = branchMesh.uv;
+
         newBranch.GetComponent<MeshFilter>().sharedMesh = branchMesh;
+
+        return branch;
     }
 
     private void RecalculateNormals(Mesh mesh)
@@ -160,16 +243,16 @@ public class TreeEntity
         return localRotatedPoint + chosenPoint;
     }
 
-    BranchMesh GetMainBranchMesh(int rootBranchIndex, float baseRadius)
+    MeshStruct GetMainBranchMesh(int rootBranchIndex, float baseRadius)
     {
         int branchSegments = graphComplexity + 1 - (int)Mathf.Floor(Mathf.Log(rootBranchIndex + 1, 2));
         int budIndex = rootBranchIndex;
-        BranchMesh branchMesh = new BranchMesh();
-        BranchMesh branchConfig = GetBranchMesh();
+        MeshStruct branchMesh = new MeshStruct();
+        MeshStruct branchConfig = GetBranchMesh();
 
         int composedResolutionV = branchSegments * resolutionV;
         branchMesh.vertices = new Vector3[(resolutionU + 1) * (composedResolutionV + 1)];
-        branchMesh.indices = new int[6 * resolutionU * composedResolutionV];
+        branchMesh.triangles = new int[6 * resolutionU * composedResolutionV];
         int mainVi = 0, mainTi = 0;
         Vector3 translateBranch = Vector3.zero;
         int branchRing = 0;
@@ -197,7 +280,7 @@ public class TreeEntity
                     {
                         for(int k = 0; k < 6; k++)
                         {
-                            branchMesh.indices[mainTi] = branchConfig.indices[ti] + indicesOffset;
+                            branchMesh.triangles[mainTi] = branchConfig.triangles[ti] + indicesOffset;
                             mainTi++; ti++;
                         }
                     }
@@ -209,11 +292,11 @@ public class TreeEntity
         return branchMesh;
     }
 
-    BranchMesh GetBranchMesh()
+    MeshStruct GetBranchMesh()
     {
-        BranchMesh branchMesh = new BranchMesh();
+        MeshStruct branchMesh = new MeshStruct();
         branchMesh.vertices = new Vector3[(resolutionU + 1) * (resolutionV + 1)];
-        branchMesh.indices = new int[6 * resolutionU * resolutionV];
+        branchMesh.triangles = new int[6 * resolutionU * resolutionV];
 
         int vi = 0, ti = 0;
         for (int v = 0; v <= resolutionV; v++)
@@ -230,24 +313,45 @@ public class TreeEntity
 
                 if (v < resolutionV && u < resolutionU)
                 {
-                    int currentIndex = v * (resolutionU + 1) + u;
-                    int rightIndex = v * (resolutionU + 1) + (u + 1);
-                    int topRightIndex = (v + 1) * (resolutionU + 1) + (u + 1);
-                    int topIndex = (v + 1) * (resolutionU + 1) + u;
+                    CalculateTriangles(branchMesh.triangles, ti, u, v, resolutionU);
+                    ti += 6;
+                    // int currentIndex = v * (resolutionU + 1) + u;
+                    // int rightIndex = v * (resolutionU + 1) + (u + 1);
+                    // int topRightIndex = (v + 1) * (resolutionU + 1) + (u + 1);
+                    // int topIndex = (v + 1) * (resolutionU + 1) + u;
 
-                    branchMesh.indices[ti] = currentIndex;
-                    branchMesh.indices[ti + 1] = topRightIndex;
-                    branchMesh.indices[ti + 2] = rightIndex;
-                    ti += 3;
+                    // branchMesh.triangles[ti] = currentIndex;
+                    // branchMesh.triangles[ti + 1] = topRightIndex;
+                    // branchMesh.triangles[ti + 2] = rightIndex;
+                    // ti += 3;
 
-                    branchMesh.indices[ti] = currentIndex;
-                    branchMesh.indices[ti + 1] = topIndex;
-                    branchMesh.indices[ti + 2] = topRightIndex;
-                    ti += 3;
+                    // branchMesh.triangles[ti] = currentIndex;
+                    // branchMesh.triangles[ti + 1] = topIndex;
+                    // branchMesh.triangles[ti + 2] = topRightIndex;
+                    // ti += 3;
                 }
             }
         }
 
         return branchMesh;
+    }
+
+    // function that calculates the two triangles of a square from a mesh
+    private void CalculateTriangles(int[] triangles, int ti, int u, int v, int resU)
+    {
+        int currentIndex = v * (resU + 1) + u;
+        int rightIndex = v * (resU + 1) + (u + 1);
+        int topRightIndex = (v + 1) * (resU + 1) + (u + 1);
+        int topIndex = (v + 1) * (resU + 1) + u;
+
+        triangles[ti] = currentIndex;
+        triangles[ti + 1] = topRightIndex;
+        triangles[ti + 2] = rightIndex;
+        ti += 3;
+
+        triangles[ti] = currentIndex;
+        triangles[ti + 1] = topIndex;
+        triangles[ti + 2] = topRightIndex;
+        ti += 3;
     }
 }

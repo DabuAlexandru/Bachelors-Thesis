@@ -23,9 +23,11 @@ public struct BranchGraphNode
 public static class GraphGenerator
 {
     private const float branchSeparationAngle = 40.0f; // the angle of separation from the main branch
-    private const float rotationVariationAngle = 40.0f; // offset on the rotation angle to have some variation
+    private const float rotationVariationAngle = 30.0f; // offset on the rotation angle to have some variation
     private const float bezierHeight = 0.2f;
     private const float bezierPointVariation = 0.2f;
+    private const float budOriginPercent = 0.75f;
+    private const float lengthReductionRate = 0.825f;
 
     public static BranchGraphNode[] GenerateBranchGraph(int maxGrowthStep)
     {
@@ -77,14 +79,14 @@ public static class GraphGenerator
         }
         else
         {
-            newNode.budPosition = parent.GetPointLinear(0.75f);
+            newNode.budPosition = parent.GetPointLinear(budOriginPercent);
             float variationY = Random.Range(0.001f, 360.0f);
             newNode.growthDirection =
                 Quaternion.FromToRotation(Vector3.up, parent.growthDirection) *
                 Quaternion.Euler(branchSeparationAngle, variationY, 0.0f) *
                 ApplyRotationVariation(Vector3.up);
         }
-        newNode.length = parent.length * 0.825f;
+        newNode.length = parent.length * lengthReductionRate;
         newNode.bezierControlPoint = CalculateBezierControlPoint(newNode);
         return newNode;
     }

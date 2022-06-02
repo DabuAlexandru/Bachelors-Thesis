@@ -2701,7 +2701,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731619081741, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731677564156, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_RootOrder
@@ -2753,7 +2753,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731677564157, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731809861652, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2761,7 +2761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731809861653, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5656104732085402642, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_Mesh
@@ -3263,7 +3263,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &1455541579
 CapsuleCollider:
   m_ObjectHideFlags: 0

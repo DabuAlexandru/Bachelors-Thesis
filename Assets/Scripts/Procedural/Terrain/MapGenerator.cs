@@ -101,8 +101,14 @@ public class NoiseSettings
 
 public class MapGenerator : MonoBehaviour {
 
-	enum DrawMode {NoiseMap, Mesh, Island};
+	enum DrawMode {NoiseMap, Mesh, TreeMap, Island};
 	[SerializeField] DrawMode drawMode;
+
+	[SerializeField, Min(1)] int windowSize = 1;
+
+	[SerializeField, Min(0)] int variance = 1;
+
+	[SerializeField] bool randomize = false;
 
 	[SerializeField] NoiseFunction noiseFunction;
 
@@ -110,7 +116,7 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeReference] Material treeMaterial;
 
-	const int mapChunkSize = 240;
+	const int mapChunkSize = 120;
 	const int islandChunkSize = 120;
 	const int islandChunkCount = 4;
 
@@ -128,6 +134,10 @@ public class MapGenerator : MonoBehaviour {
 		MapDisplay display = FindObjectOfType<MapDisplay> ();
 		if (drawMode == DrawMode.NoiseMap) {
 			display.DrawTexture (TextureGenerator.TextureFromHeightMap(noiseMap));
+		}
+		if (drawMode == DrawMode.TreeMap) {
+			float[,] heightMap = new float[mapChunkSize + 1, mapChunkSize + 1];
+			display.DrawTexture(TextureGenerator.TextureFromHeightMapWithTrees(heightMap, TerrainMeshGenerator.GetTreesOnHeightMap(noiseMap, windowSize, variance, randomize)));
 		}
 		else if (drawMode == DrawMode.Mesh) {
 			display.DrawMesh (

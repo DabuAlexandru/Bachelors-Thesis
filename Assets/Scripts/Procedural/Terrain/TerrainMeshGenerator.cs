@@ -71,6 +71,61 @@ public static class TerrainMeshGenerator
         Vector3 edge13 = vertex3 - vertex1;
         return Vector3.Cross(edge12, edge13).normalized;
     }
+
+    public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, int windowSize = 1, int variance = 2, bool applyRandom = false)
+    {
+        int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
+ 
+        int treeIndex = 0;
+        int dirU = 1, dirV = 1; // the direction of the applied offset
+
+        int maxU = mapWidth - windowSize - variance;
+        int maxV = mapHeight - windowSize - variance;
+        int numPointsU = (maxU - windowSize - 1) / (2 * windowSize) + 1;
+        int numPointsV = (maxV - windowSize - 1) / (2 * windowSize + Mathf.Min(1, variance)) + 1;
+
+        Vector2[] treePositions = new Vector2[numPointsU * numPointsV];
+
+        int offsetU = 0;
+        for(int v = windowSize; v < maxV; v += 2 * windowSize + Mathf.Min(1, variance))
+        {
+            int offsetV = 0;
+            for(int u = windowSize; u < maxU; u += 2 * windowSize)
+            {
+                // Debug.Log(offsetU + " " + offsetV);
+                int treeU = u + offsetU, treeV = v + offsetV;
+                if(applyRandom)
+                {
+                    treeU += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
+                    treeV += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
+                    Debug.Log((treeU - (u + offsetU)) + " " + (treeV - (v + offsetV)));
+                }
+                treePositions[treeIndex] = new Vector2(treeU, treeV);
+                // Debug.Log(treeU + " " + treeV);
+                treeIndex++;
+                
+                if(variance > 0)
+                {
+                    offsetV += dirV;
+                    if(offsetV < 0 || offsetV > variance)
+                    {
+                        dirV *= -1;
+                        offsetV += 2 * dirV;
+                    }
+                }
+            }
+            if(variance > 0)
+            {
+                offsetU += dirU;
+                if(offsetU < 0 || offsetU > variance)
+                {
+                    dirU *= -1;
+                    offsetU += 2 * dirU;
+                }
+            }
+        }
+        return treePositions;
+    }
 }
 
 public class ProceduralPlaneMesh 

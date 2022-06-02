@@ -2168,6 +2168,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
+      propertyPath: variance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
@@ -2176,8 +2180,12 @@ PrefabInstance:
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
+      propertyPath: randomize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: autoUpdate
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: filterFlag
@@ -2190,6 +2198,10 @@ PrefabInstance:
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: noiseScale
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
+      propertyPath: windowSize
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: cellDensity
@@ -2217,7 +2229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: noiseFunction
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: reductionRate
@@ -2445,7 +2457,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: noiseSettings.diamondSquareNoiseParams.randRange
-      value: 25
+      value: 43.7
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: meshHeightCurve.m_Curve.Array.data[0].tangentMode
@@ -2465,7 +2477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: noiseSettings.diamondSquareNoiseParams.persistence
-      value: 0.284
+      value: 0.548
       objectReference: {fileID: 0}
     - target: {fileID: 5656104731384110378, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
       propertyPath: noiseSettings.diamondSquareNoiseParams.reductionRate

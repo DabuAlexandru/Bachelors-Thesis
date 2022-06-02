@@ -116,7 +116,7 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeReference] Material treeMaterial;
 
-	const int mapChunkSize = 119;
+	const int mapChunkSize = 120;
 	const int islandChunkSize = 120;
 	const int islandChunkCount = 4;
 
@@ -137,7 +137,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 		if (drawMode == DrawMode.TreeMap) {
 			float[,] heightMap = new float[mapChunkSize + 1, mapChunkSize + 1];
-			display.DrawTexture(TextureGenerator.TextureFromHeightMapWithTrees(heightMap, TerrainMeshGenerator.GetTreesOnHeightMap(noiseMap, windowSize, variance, randomize)));
+			display.DrawTexture(TextureGenerator.TextureFromHeightMapWithTrees(noiseMap, TerrainMeshGenerator.GetTreesOnHeightMap(noiseMap, windowSize, variance, randomize)));
 		}
 		else if (drawMode == DrawMode.Mesh) {
 			display.DrawMesh (

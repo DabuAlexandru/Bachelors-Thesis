@@ -40,14 +40,14 @@ public static class TextureGenerator {
 
 		for(int i = 0; i < treePositions.Length; i++)
 		{
-			for(int k = -1; k <= 0; k++)
-			{
-				for(int l = -1; l <= 0; l++)
-				{
-					colourMap[((int)treePositions[i].y + k) * width + (int)(treePositions[i].x + l)] = Color.red; 
-				}
-			}
-			
+			// for(int k = -1; k <= 0; k++)
+			// {
+			// 	for(int l = -1; l <= 0; l++)
+			// 	{
+			// 		colourMap[((int)treePositions[i].y + k) * width + (int)(treePositions[i].x + l)] = Color.red; 
+			// 	}
+			// }
+			colourMap[((int)treePositions[i].y) * width + (int)(treePositions[i].x)] = Color.red; 
 		}
 
 		return TextureFromColourMap (colourMap, width, height);

@@ -74,6 +74,8 @@ public static class TerrainMeshGenerator
 
     public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, int windowSize = 1, int variance = 2, bool applyRandom = false)
     {
+        const float maxElevationDifference = 0.035f;
+        const float minTerrainHeight = 0.2f, maxTerrainHeight = 0.6f;
         int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
  
         int treeIndex = 0;
@@ -105,8 +107,26 @@ public static class TerrainMeshGenerator
                     treeU += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
                     treeV += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
                 }
-                treePositions[treeIndex] = new Vector2(treeU, treeV);
-                treeIndex++;
+
+                float minHeight = heightMap[treeU, treeV], maxHeight = heightMap[treeU, treeV];
+
+                if(heightMap[treeU, treeV] >= minTerrainHeight && heightMap[treeU, treeV] <= maxTerrainHeight)
+                {
+                    for(int k = -1; k <= 1; k++)
+                    {
+                        for(int l = -1; l <= 1; l++)
+                        {
+                            minHeight = Mathf.Min(heightMap[treeU + l, treeV + k], minHeight);
+                            maxHeight = Mathf.Max(heightMap[treeU + l, treeV + k], maxHeight);
+                        }
+                    }
+
+                    if(maxHeight - minHeight <= maxElevationDifference) 
+                    {
+                        treePositions[treeIndex] = new Vector2(treeU, treeV);
+                        treeIndex++;
+                    }
+                }
                 
                 if(variance > 0)
                 {
@@ -128,7 +148,13 @@ public static class TerrainMeshGenerator
                 }
             }
         }
-        return treePositions;
+
+        Vector2[] resizedTreePositions = new Vector2[treeIndex];
+        for(int i = 0; i < treeIndex; i++)
+        {
+            resizedTreePositions[i] = treePositions[i];
+        }
+        return resizedTreePositions;
     }
 }
 

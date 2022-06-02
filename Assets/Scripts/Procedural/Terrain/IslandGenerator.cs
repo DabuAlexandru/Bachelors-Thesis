@@ -11,7 +11,7 @@ public static class IslandGenerator
     private static GameObject island;
     // private static 
 
-    public static void GenerateIsland(int resolution, int mapChunkSize, NoiseSettings noiseSettings,
+    public static void GenerateIsland(int resolution, int mapChunkSize, NoiseSettings noiseSettings, DistributionParams distributionParams,
         NoiseFunction noiseFunction, Material terrainMaterial, Material treeMaterial
     )
     {
@@ -80,7 +80,7 @@ public static class IslandGenerator
             }
         }
         if(island == null) 
-            InitializeIslandObject(terrainMaterial, treeMaterial, heightMap, meshHeightMultiplier);
+            InitializeIslandObject(distributionParams, terrainMaterial, treeMaterial, heightMap, meshHeightMultiplier);
         UpdateChunkMeshes();
     }
 
@@ -99,7 +99,7 @@ public static class IslandGenerator
         return b * b - (u + v);
     }
 
-    private static void InitializeIslandObject(Material terrainMaterial, Material treeMaterial, float[,] heightMap, float meshHeightMultiplier)
+    private static void InitializeIslandObject(DistributionParams distributionParams, Material terrainMaterial, Material treeMaterial, float[,] heightMap, float meshHeightMultiplier)
     {
         island = new GameObject("Island");
         islandChunkObjects = new GameObject[resolution, resolution];
@@ -123,12 +123,21 @@ public static class IslandGenerator
         }
         island.transform.localScale = new Vector3(mapChunkSize, 1.0f, mapChunkSize);
 
-        for(int j = 0; j < resolution; j++)
+        Vector2[] trees = TerrainMeshGenerator.GetTreesOnHeightMap(heightMap, distributionParams);
+        AddTreesToIsland(islandChunkObjects, trees, treeMaterial, heightMap, meshHeightMultiplier);
+    }
+
+    private static void AddTreesToIsland(GameObject[,] islandChunkObjects, Vector2[] trees, Material treeMaterial, float[,] heightMap, float meshHeightMultiplier)
+    {
+        int width = heightMap.GetLength(0), height = heightMap.GetLength(1);
+        for(int ti = 0; ti < trees.Length; ti++)
         {
-            for(int i = 0; i < resolution; i++)
-            {
-                AddTreesToObject(islandChunkObjects[i, j], treeMaterial, i, j, heightMap, meshHeightMultiplier);
-            }
+            int u = (int)trees[ti].x - width / 2, v = (int)trees[ti].y - height / 2;
+            int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize), j = (int)Mathf.Floor(trees[ti].y / mapChunkSize);
+
+            GameObject tree = new TreeEntity(treeMaterial).TreeObject;
+            tree.transform.position = new Vector3(u, heightMap[(int)trees[ti].x, (int)trees[ti].y] * meshHeightMultiplier, v);
+            tree.transform.SetParent(islandChunkObjects[i, j].transform);
         }
     }
 

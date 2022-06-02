@@ -72,10 +72,12 @@ public static class TerrainMeshGenerator
         return Vector3.Cross(edge12, edge13).normalized;
     }
 
-    public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, int windowSize = 1, int variance = 2, bool applyRandom = false)
+    public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, DistributionParams distributionParams)
+        => GetTreesOnHeightMap(heightMap, distributionParams.MinTerrainHeight, distributionParams.MaxTerrainHeight, 
+            distributionParams.MaxElevationDifference, distributionParams.WindowSize, distributionParams.Variance, distributionParams.Randomize);
+
+    public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, float minTerrainHeight, float maxTerrainHeight, float maxElevationDifference, int windowSize = 1, int variance = 2, bool applyRandom = false)
     {
-        const float maxElevationDifference = 0.035f;
-        const float minTerrainHeight = 0.2f, maxTerrainHeight = 0.6f;
         int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
  
         int treeIndex = 0;
@@ -94,6 +96,7 @@ public static class TerrainMeshGenerator
         int emptySpaceV = mapHeight - (numPointsV * incremV + variance);
 
         Vector2[] treePositions = new Vector2[numPointsU * numPointsV];
+        Debug.Log(treePositions.Length);
 
         int offsetU = 0;
         for(int v = windowSize; v < maxV; v += incremV)

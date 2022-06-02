@@ -99,22 +99,40 @@ public class NoiseSettings
 	public CombinedNoiseParams CombinedNoiseParams { get => combinedNoiseParams; }
 }
 
+[System.Serializable]
+public class DistributionParams
+{
+	[SerializeField, Min(1)] int windowSize = 1;
+	public int WindowSize { get => windowSize; }
+
+	[SerializeField, Range(0f, 1f)] float minTerrainHeight = 0.1f;
+	public float MinTerrainHeight { get => minTerrainHeight; }
+	
+	[SerializeField, Range(0f, 1f)] float maxTerrainHeight = 0.9f;
+	public float MaxTerrainHeight { get => maxTerrainHeight; }
+
+	[SerializeField, Range(0f, 0.2f)] float maxElevationDifference = 0.03f;
+	public float MaxElevationDifference { get => maxElevationDifference; }
+
+	[SerializeField, Min(0)] int variance = 1;
+	public int Variance { get => variance; }
+
+	[SerializeField] bool randomize = false;
+	public bool Randomize { get => randomize; }
+}
+
 public class MapGenerator : MonoBehaviour {
 
 	enum DrawMode {NoiseMap, Mesh, TreeMap, Island};
 	[SerializeField] DrawMode drawMode;
-
-	[SerializeField, Min(1)] int windowSize = 1;
-
-	[SerializeField, Min(0)] int variance = 1;
-
-	[SerializeField] bool randomize = false;
 
 	[SerializeField] NoiseFunction noiseFunction;
 
 	[SerializeReference] Material terrainMaterial;
 
 	[SerializeReference] Material treeMaterial;
+
+	[SerializeField] DistributionParams distributionParams;
 
 	const int mapChunkSize = 120;
 	const int islandChunkSize = 120;
@@ -137,7 +155,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 		if (drawMode == DrawMode.TreeMap) {
 			float[,] heightMap = new float[mapChunkSize + 1, mapChunkSize + 1];
-			display.DrawTexture(TextureGenerator.TextureFromHeightMapWithTrees(noiseMap, TerrainMeshGenerator.GetTreesOnHeightMap(noiseMap, windowSize, variance, randomize)));
+			display.DrawTexture(TextureGenerator.TextureFromHeightMapWithTrees(noiseMap, TerrainMeshGenerator.GetTreesOnHeightMap(noiseMap, distributionParams)));
 		}
 		else if (drawMode == DrawMode.Mesh) {
 			display.DrawMesh (
@@ -145,7 +163,7 @@ public class MapGenerator : MonoBehaviour {
 			);
 		}
 		else if (drawMode == DrawMode.Island) {
-			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, noiseFunction, terrainMaterial, treeMaterial);
+			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, distributionParams, noiseFunction, terrainMaterial, treeMaterial);
 		}
 	}
 

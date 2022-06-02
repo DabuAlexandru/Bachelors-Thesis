@@ -81,27 +81,31 @@ public static class TerrainMeshGenerator
 
         int maxU = mapWidth - windowSize - variance;
         int maxV = mapHeight - windowSize - variance;
+
         int numPointsU = (maxU - windowSize - 1) / (2 * windowSize) + 1;
         int numPointsV = (maxV - windowSize - 1) / (2 * windowSize + Mathf.Min(1, variance)) + 1;
+
+        int incremU = 2 * windowSize;
+        int incremV = 2 * windowSize + Mathf.Min(1, variance);
+
+        int emptySpaceU = mapWidth - (numPointsU * incremU + variance);
+        int emptySpaceV = mapHeight - (numPointsV * incremV + variance);
 
         Vector2[] treePositions = new Vector2[numPointsU * numPointsV];
 
         int offsetU = 0;
-        for(int v = windowSize; v < maxV; v += 2 * windowSize + Mathf.Min(1, variance))
+        for(int v = windowSize; v < maxV; v += incremV)
         {
             int offsetV = 0;
-            for(int u = windowSize; u < maxU; u += 2 * windowSize)
+            for(int u = windowSize; u < maxU; u += incremU)
             {
-                // Debug.Log(offsetU + " " + offsetV);
-                int treeU = u + offsetU, treeV = v + offsetV;
+                int treeU = u + offsetU + emptySpaceU / 2, treeV = v + offsetV + emptySpaceV / 2;
                 if(applyRandom)
                 {
                     treeU += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
                     treeV += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
-                    Debug.Log((treeU - (u + offsetU)) + " " + (treeV - (v + offsetV)));
                 }
                 treePositions[treeIndex] = new Vector2(treeU, treeV);
-                // Debug.Log(treeU + " " + treeV);
                 treeIndex++;
                 
                 if(variance > 0)

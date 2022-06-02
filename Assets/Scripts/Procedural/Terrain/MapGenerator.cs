@@ -116,7 +116,7 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeReference] Material treeMaterial;
 
-	const int mapChunkSize = 120;
+	const int mapChunkSize = 119;
 	const int islandChunkSize = 120;
 	const int islandChunkCount = 4;
 

@@ -150,13 +150,24 @@ public class TreeEntity
     {
         MeshStruct leaves = GetLeavesMesh();
         Vector3 reposition = graph[index].GetPointLinear(0.9f);
-        Vector3 rescale = new Vector3(0.8f, 0.7f, 0.8f) * 0.75f;
+        Vector3 rescale = new Vector3(0.8f, 0.7f, 0.8f) * 0.3f * GetBranchLengthByIndex(index);
         Vector3 rotate = new Vector3(Random.Range(0.01f, 360.0f), Random.Range(0.01f, 360.0f), Random.Range(0.01f, 360.0f));
 
         GameObject newLeaves = new GameObject("Leaf" + index);
         leaves = InitializeCircularMeshShape(newLeaves, leavesMaterial, leaves, reposition, rescale, rotate);
     
         return leaves;
+    }
+
+    private int GetBranchLengthByIndex(int branchIndex)
+    {
+        int length = 1;
+        while(branchIndex % 2 == 0 && branchIndex != 0)
+        {
+            branchIndex = branchIndex / 2 - 1;
+            length++;
+        }
+        return length;
     }
 
     private MeshStruct InitializeCircularMeshShape(GameObject gameObject, Material material, MeshStruct baseMeshStruct, Vector3 reposition, Vector3 rescale, Vector3 rotate)

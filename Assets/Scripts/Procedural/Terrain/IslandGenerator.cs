@@ -32,7 +32,7 @@ public static class IslandGenerator
     private static IslandChunk[,] islandChunks;
 
     public static void GenerateIsland(int resolution, int mapChunkSize, NoiseSettings noiseSettings, DistributionParams distributionParams,
-        NoiseFunction noiseFunction, Material terrainMaterial, Material treeMaterial
+        NoiseFunction noiseFunction, Material terrainMaterial, Material treeMaterial, Material leavesMaterial
     )
     {
         IslandGenerator.resolution = resolution;
@@ -105,7 +105,7 @@ public static class IslandGenerator
         if(island == null)
             InitializeIslandObject(terrainMaterial, heightMap, meshHeightMultiplier);
         Vector2[] trees = TerrainMeshGenerator.GetTreesOnHeightMap(heightMap, distributionParams);
-        AddTreesToIsland(trees, treeMaterial, heightMap, meshHeightMultiplier);
+        AddTreesToIsland(trees, treeMaterial, leavesMaterial, heightMap, meshHeightMultiplier);
         UpdateChunkMeshes();
     }
 
@@ -160,7 +160,7 @@ public static class IslandGenerator
         island.transform.localScale = new Vector3(mapChunkSize, 1.0f, mapChunkSize);
     }
 
-    private static void AddTreesToIsland(Vector2[] trees, Material treeMaterial, float[,] heightMap, float meshHeightMultiplier)
+    private static void AddTreesToIsland(Vector2[] trees, Material treeMaterial, Material leavesMaterial, float[,] heightMap, float meshHeightMultiplier)
     {
         int width = heightMap.GetLength(0), height = heightMap.GetLength(1);
         for(int ti = 0; ti < trees.Length; ti++)
@@ -168,7 +168,7 @@ public static class IslandGenerator
             int u = (int)trees[ti].x - width / 2, v = (int)trees[ti].y - height / 2;
             int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize), j = (int)Mathf.Floor(trees[ti].y / mapChunkSize);
 
-            TreeEntity tree = new TreeEntity(treeMaterial, treeMaterial);
+            TreeEntity tree = new TreeEntity(treeMaterial, leavesMaterial);
             islandChunks[i, j].AddTree(tree);
             tree.TreeObject.transform.position = new Vector3(u, heightMap[(int)trees[ti].x, (int)trees[ti].y] * meshHeightMultiplier, v);
             tree.TreeObject.transform.SetParent(islandChunks[i, j].ChunkObject.transform);

@@ -132,6 +132,8 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeReference] Material treeMaterial;
 
+	[SerializeReference] Material leavesMaterial;
+
 	[SerializeField] DistributionParams distributionParams;
 
 	const int mapChunkSize = 120;
@@ -163,7 +165,7 @@ public class MapGenerator : MonoBehaviour {
 			);
 		}
 		else if (drawMode == DrawMode.Island) {
-			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, distributionParams, noiseFunction, terrainMaterial, treeMaterial);
+			IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, distributionParams, noiseFunction, terrainMaterial, treeMaterial, leavesMaterial);
 		}
 	}
 

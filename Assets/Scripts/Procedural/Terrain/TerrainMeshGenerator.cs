@@ -96,7 +96,6 @@ public static class TerrainMeshGenerator
         int emptySpaceV = mapHeight - (numPointsV * incremV + variance);
 
         Vector2[] treePositions = new Vector2[numPointsU * numPointsV];
-        Debug.Log(treePositions.Length);
 
         int offsetU = 0;
         for(int v = windowSize; v < maxV; v += incremV)

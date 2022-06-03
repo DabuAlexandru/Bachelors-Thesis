@@ -41,7 +41,6 @@ public class TreeGenerator : MonoBehaviour
         {
             tree = new TreeEntity(treeMaterial);
         }
-        Debug.Log(LOD);
         for(int i = 0; i < 1; i++) 
         {
             tree.TreeObject.transform.position = new Vector3(7 * i % 35, 7 * Mathf.Floor(i / 5), 0f);

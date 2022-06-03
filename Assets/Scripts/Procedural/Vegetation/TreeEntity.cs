@@ -315,20 +315,6 @@ public class TreeEntity
                 {
                     CalculateTriangles(branchMesh.triangles, ti, u, v, resolutionU);
                     ti += 6;
-                    // int currentIndex = v * (resolutionU + 1) + u;
-                    // int rightIndex = v * (resolutionU + 1) + (u + 1);
-                    // int topRightIndex = (v + 1) * (resolutionU + 1) + (u + 1);
-                    // int topIndex = (v + 1) * (resolutionU + 1) + u;
-
-                    // branchMesh.triangles[ti] = currentIndex;
-                    // branchMesh.triangles[ti + 1] = topRightIndex;
-                    // branchMesh.triangles[ti + 2] = rightIndex;
-                    // ti += 3;
-
-                    // branchMesh.triangles[ti] = currentIndex;
-                    // branchMesh.triangles[ti + 1] = topIndex;
-                    // branchMesh.triangles[ti + 2] = topRightIndex;
-                    // ti += 3;
                 }
             }
         }

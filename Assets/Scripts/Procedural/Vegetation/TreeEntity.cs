@@ -1,12 +1,6 @@
 using UnityEngine;
-using Unity.Mathematics;
+// using Unity.Mathematics;
 using static Unity.Mathematics.math;
-
-public struct BranchObject
-{
-    public MeshStruct branch;
-    public MeshStruct leaves;
-}
 
 public struct MeshStruct
 {
@@ -24,32 +18,33 @@ public class TreeEntity
     const int resolutionV = 12;
 
     private MeshStruct[] branchMeshes;
+    private MeshStruct[] leavesMeshes;
 
     private GameObject treeObject;
     public GameObject TreeObject { get => treeObject; }
 
     BranchGraphNode[] graph;
     Material treeMaterial;
+    Material leavesMaterial;
+
     const int graphComplexity = 4;
     const int maximumLOD = 3;
 
     public void ModifyLODTree(int LOD = 0)
     {
         LOD = Mathf.Clamp(LOD, 0, maximumLOD);
-
         for(int i = 0; i < branchMeshes.Length; i++)
         {
-            ModifyLODBranch(i, LOD);
+            ModifyLODCircularObject(leavesMeshes[i], LOD);
+            ModifyLODCircularObject(branchMeshes[i], LOD);
         }
     }
 
-    private void ModifyLODBranch(int branchIndex, int LOD = 0)
+    private void ModifyLODCircularObject(MeshStruct baseMeshStruct, int LOD = 0)
     {
-        MeshStruct branchMeshStruct = branchMeshes[branchIndex];
+        Mesh objectMesh = baseMeshStruct.mesh;
 
-        Mesh branchMesh = branchMeshStruct.mesh;
-
-        int numOfVertices = branchMeshStruct.vertices.Length;
+        int numOfVertices = baseMeshStruct.vertices.Length;
 
         int resU = resolutionU;
         int resV = numOfVertices / (resolutionU + 1) - 1; // we wielded together more branches
@@ -64,21 +59,21 @@ public class TreeEntity
             for(int u = 0; u <= resU; u += (LOD + 1))
             {
                 int globalVi = v * (resU + 1) + u;
-                vertices[vi] = branchMeshStruct.vertices[globalVi];
-                normals[vi] = branchMeshStruct.normals[globalVi];
-                uvs[vi] = branchMeshStruct.uvs[globalVi];
+                vertices[vi] = baseMeshStruct.vertices[globalVi];
+                normals[vi] = baseMeshStruct.normals[globalVi];
+                uvs[vi] = baseMeshStruct.uvs[globalVi];
                 vi++;
             }
         }
-        int[] triangles = GetTrianglesFromCylinder(resU / (LOD + 1), resV / (LOD + 1));
+        int[] triangles = GetTrianglesFromCircularMesh(resU / (LOD + 1), resV / (LOD + 1));
 
-        branchMesh.vertices = vertices;
-        branchMesh.normals = normals;
-        branchMesh.uv = uvs;
-        branchMesh.triangles = triangles;
+        objectMesh.vertices = vertices;
+        objectMesh.normals = normals;
+        objectMesh.uv = uvs;
+        objectMesh.triangles = triangles;
     }
 
-    private int[] GetTrianglesFromCylinder(int resU, int resV)
+    private int[] GetTrianglesFromCircularMesh(int resU, int resV)
     {
         int[] triangles = new int[6 * resU * resV];
         int ti = 0;
@@ -93,10 +88,11 @@ public class TreeEntity
         return triangles;
     }
 
-    public TreeEntity(Material treeMaterial)
+    public TreeEntity(Material treeMaterial, Material leavesMaterial)
     {
-        graph = GraphGenerator.GenerateBranchGraph(graphComplexity);
+        graph = GraphGenerator.GenerateBranchGraph(graphComplexity - 1);
         this.treeMaterial = treeMaterial;
+        this.leavesMaterial = leavesMaterial;
         InitializeTreeObject();
     }
 
@@ -104,9 +100,7 @@ public class TreeEntity
     {
         int n = graph.Length;
 		// int rootBranchIndex = 1; // the starting point of a branch formed by multiple segments
-        // MeshStruct branch = GetMainBranchMesh(rootBranchIndex, 0.2f);
-        int rootBranchCount = (int)Mathf.Pow(2, graphComplexity - 1);
-        // float baseRadius = graphComplexity * 0.035f;
+        int rootBranchCount = (int)Mathf.Pow(2, graphComplexity - 1) - 1;
         float baseRadius = 0.175f;
         float baseRadiusReductionRate = 0.7f;
 
@@ -122,45 +116,76 @@ public class TreeEntity
         treeCollider.center = Vector3.up * (treeCollider.height / 2.0f);
 
         branchMeshes = new MeshStruct[rootBranchCount + 1];
-        branchMeshes[0] = CreateBranch(0, baseRadius, treeObject.transform);
+        branchMeshes[0] = CreateBranch(0, baseRadius);
         // const float min
         for(int i = 0; i < rootBranchCount; i++)
         {
             int branchId = 2 * i + 1;
-            // float branchBaseRadius = baseRadius * (0.01f + 0.65f * (1.0f - ((float)i / (rootBranchCount + 1))));
             float branchBaseRadius = baseRadius * Mathf.Pow(baseRadiusReductionRate, Mathf.Log(branchId, 2) + 1);
-            branchMeshes[i + 1] = CreateBranch(branchId, branchBaseRadius, treeObject.transform);
+            
+            branchMeshes[i + 1] = CreateBranch(branchId, branchBaseRadius);
+        }
+
+        int firstBranchIndex = (int)Mathf.Pow(2f, graphComplexity - 1) - 1;
+        int lastBranchIndex = 2 * firstBranchIndex;
+        
+        leavesMeshes = new MeshStruct[lastBranchIndex - firstBranchIndex + 1];
+        for(int i = firstBranchIndex; i <= lastBranchIndex; i++)
+        {
+            leavesMeshes[i - firstBranchIndex] = CreateLeaves(i);
         }
     }
 
-    private MeshStruct CreateBranch(int rootBranchIndex, float baseRadius, Transform parent)
+    private MeshStruct CreateBranch(int rootBranchIndex, float baseRadius)
     {
         MeshStruct branch = GetMainBranchMesh(rootBranchIndex, baseRadius);
 
-        GameObject newBranch = new GameObject("Branch" + (int)((rootBranchIndex - 1) / 2));
-        newBranch.AddComponent<MeshFilter>();
-        newBranch.AddComponent<MeshRenderer>();
-
-        newBranch.GetComponent<MeshRenderer>().material = treeMaterial;
-
-        newBranch.transform.SetParent(parent);
-
-        Mesh branchMesh = newBranch.GetComponent<MeshFilter>().sharedMesh;
-        branchMesh = new Mesh();
-        branchMesh.vertices = branch.vertices;
-        branchMesh.triangles = branch.triangles;
-    
-        CalculateUVs(branchMesh);
-        RecalculateNormals(branchMesh);
-        // branchMesh.RecalculateNormals();
-
-        branch.mesh = branchMesh;
-        branch.normals = branchMesh.normals;
-        branch.uvs = branchMesh.uv;
-
-        newBranch.GetComponent<MeshFilter>().sharedMesh = branchMesh;
+        GameObject newBranch = new GameObject("Branch" + (int)(1 + (rootBranchIndex - 1) / 2));
+        branch = InitializeCircularMeshShape(newBranch, treeMaterial, branch, Vector3.zero, Vector3.one, Vector3.zero);
 
         return branch;
+    }
+
+    private MeshStruct CreateLeaves(int index)
+    {
+        MeshStruct leaves = GetLeavesMesh();
+        Vector3 reposition = graph[index].GetPointLinear(0.9f);
+        Vector3 rescale = new Vector3(0.8f, 0.7f, 0.8f) * 0.75f;
+        Vector3 rotate = new Vector3(Random.Range(0.01f, 360.0f), Random.Range(0.01f, 360.0f), Random.Range(0.01f, 360.0f));
+
+        GameObject newLeaves = new GameObject("Leaf" + index);
+        leaves = InitializeCircularMeshShape(newLeaves, leavesMaterial, leaves, reposition, rescale, rotate);
+    
+        return leaves;
+    }
+
+    private MeshStruct InitializeCircularMeshShape(GameObject gameObject, Material material, MeshStruct baseMeshStruct, Vector3 reposition, Vector3 rescale, Vector3 rotate)
+    {
+        gameObject.AddComponent<MeshFilter>();
+        gameObject.AddComponent<MeshRenderer>();
+
+        gameObject.GetComponent<MeshRenderer>().material = material;
+
+        gameObject.transform.SetParent(treeObject.transform);
+        gameObject.transform.position = reposition;
+        gameObject.transform.localScale = rescale;
+        gameObject.transform.Rotate(rotate, Space.Self);
+
+        Mesh objectMesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+        objectMesh = new Mesh();
+        objectMesh.vertices = baseMeshStruct.vertices;
+        objectMesh.triangles = baseMeshStruct.triangles;
+    
+        CalculateUVs(objectMesh);
+        RecalculateNormals(objectMesh);
+
+        baseMeshStruct.mesh = objectMesh;
+        baseMeshStruct.normals = objectMesh.normals;
+        baseMeshStruct.uvs = objectMesh.uv;
+
+        gameObject.GetComponent<MeshFilter>().sharedMesh = objectMesh;
+
+        return baseMeshStruct;
     }
 
     private void RecalculateNormals(Mesh mesh)
@@ -245,7 +270,7 @@ public class TreeEntity
 
     MeshStruct GetMainBranchMesh(int rootBranchIndex, float baseRadius)
     {
-        int branchSegments = graphComplexity + 1 - (int)Mathf.Floor(Mathf.Log(rootBranchIndex + 1, 2));
+        int branchSegments = graphComplexity - (int)Mathf.Floor(Mathf.Log(rootBranchIndex + 1, 2));
         int budIndex = rootBranchIndex;
         MeshStruct branchMesh = new MeshStruct();
         MeshStruct branchConfig = GetBranchMesh();
@@ -320,6 +345,37 @@ public class TreeEntity
         }
 
         return branchMesh;
+    }
+
+    MeshStruct GetLeavesMesh()
+    {
+        MeshStruct leavesMesh = new MeshStruct();
+        leavesMesh.vertices = new Vector3[(resolutionU + 1) * (resolutionV + 1)];
+        leavesMesh.triangles = new int[6 * resolutionU * resolutionV];
+
+        int vi = 0, ti = 0;
+        for (int v = 0; v <= resolutionV; v++)
+        {
+            for (int u = 0; u <= resolutionU; u++)
+            {
+                Vector3 position = new Vector3();
+                float circleRadius = sin(PI * v / resolutionV);
+                position.x = sin(PI * v / resolutionV) * cos(2 * PI * u / resolutionU);
+                position.y = -cos(PI * v / resolutionV);
+                position.z = sin(PI * v / resolutionV) * sin(2 * PI * u / resolutionU);
+
+                leavesMesh.vertices[vi] = position;
+                vi++;
+
+                if (v < resolutionV && u < resolutionU)
+                {
+                    CalculateTriangles(leavesMesh.triangles, ti, u, v, resolutionU);
+                    ti += 6;
+                }
+            }
+        }
+
+        return leavesMesh;
     }
 
     // function that calculates the two triangles of a square from a mesh

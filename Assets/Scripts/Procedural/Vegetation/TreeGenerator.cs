@@ -20,18 +20,16 @@ public class TreeGeneratorEditor : Editor
 
 public class TreeGenerator : MonoBehaviour 
 {
-    [SerializeReference]
-    private Material treeMaterial;
-    TreeEntity tree;
+    [SerializeReference] private Material treeMaterial;
+    [SerializeReference] private Material leavesMaterial;
+    [SerializeField, Range(0, 3)] private int LOD = 0;
 
-    [SerializeField]
-    [Range(0, 3)]
-    private int LOD = 0;
+    TreeEntity tree;
 
     public void Start()
     {
         Random.InitState(3);
-        tree = new TreeEntity(treeMaterial);
+        tree = new TreeEntity(treeMaterial, leavesMaterial);
     }
 
     public void ChangeLOD() 
@@ -39,7 +37,7 @@ public class TreeGenerator : MonoBehaviour
         Random.InitState(3);
         if(tree == null)
         {
-            tree = new TreeEntity(treeMaterial);
+            tree = new TreeEntity(treeMaterial, leavesMaterial);
         }
         for(int i = 0; i < 1; i++) 
         {

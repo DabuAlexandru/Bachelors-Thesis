@@ -29,11 +29,13 @@ public static class GraphGenerator
     private const float budOriginPercent = 0.75f;
     private const float lengthReductionRate = 0.825f;
 
+    private const float elevationY = -0.15f;
+
     public static BranchGraphNode[] GenerateBranchGraph(int maxGrowthStep)
     {
         // every branch spurs two new branches, one extension and one new bud, so we have a binary tree
         BranchGraphNode[] branches = new BranchGraphNode[(int)Mathf.Pow(2.0f, maxGrowthStep + 1) - 1];
-        branches[0] = new BranchGraphNode(Vector3.up, Vector3.zero, Vector3.zero, 1.0f);
+        branches[0] = new BranchGraphNode(Vector3.up, Vector3.zero + elevationY * Vector3.up, Vector3.zero, 1.0f);
         branches[0].bezierControlPoint = CalculateBezierControlPoint(branches[0]);
         // we want to generate for each branch two new branches, and each step the number of branches gets doubled
         for(int i = 0, pw = 1; i < maxGrowthStep; i++, pw *= 2)

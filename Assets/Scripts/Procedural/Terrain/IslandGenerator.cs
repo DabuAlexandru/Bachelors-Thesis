@@ -168,7 +168,7 @@ public static class IslandGenerator
             int u = (int)trees[ti].x - width / 2, v = (int)trees[ti].y - height / 2;
             int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize), j = (int)Mathf.Floor(trees[ti].y / mapChunkSize);
 
-            TreeEntity tree = new TreeEntity(treeMaterial);
+            TreeEntity tree = new TreeEntity(treeMaterial, treeMaterial);
             islandChunks[i, j].AddTree(tree);
             tree.TreeObject.transform.position = new Vector3(u, heightMap[(int)trees[ti].x, (int)trees[ti].y] * meshHeightMultiplier, v);
             tree.TreeObject.transform.SetParent(islandChunks[i, j].ChunkObject.transform);

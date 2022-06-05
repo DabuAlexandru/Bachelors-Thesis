@@ -279,7 +279,7 @@ public class Puzzle : MonoBehaviour
         // get the distance to the principal ring (the one that is hovered over)
         int ringDistance = (int)Mathf.Abs(currentRing - chosenRing);
         // calculate the altered modification rate
-        return radiusModifyRate * (1.0f - Mathf.Pow(((float)ringDistance / (numberOfAffectedNeighbourPairs + 1)), 2));
+        return radiusModifyRate * (1.0f - Mathf.Pow(((float)ringDistance / (numberOfAffectedNeighbourPairs * 1.25f)), 2));
     }
 
     Vector3 GetMouseWorldPosition()

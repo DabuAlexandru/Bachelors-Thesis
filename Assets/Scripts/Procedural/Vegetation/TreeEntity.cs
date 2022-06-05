@@ -121,6 +121,9 @@ public class TreeEntity
 
         branchMeshes = new MeshStruct[rootBranchCount + 1];
         branchMeshes[0] = CreateBranch(0, baseRadius);
+
+        // treeObject.AddComponent<MeshCollider>();
+        // treeObject.GetComponent<MeshCollider>().sharedMesh = branchMeshes[0].mesh;
         // const float min
         for (int i = 0; i < rootBranchCount; i++)
         {

@@ -148,6 +148,8 @@ public static class IslandGenerator
             
                 terrainChunk.AddComponent<MeshFilter>();
                 terrainChunk.AddComponent<MeshRenderer>();
+                terrainChunk.AddComponent<MeshCollider>();
+                terrainChunk.GetComponent<MeshCollider>();
 
                 terrainChunk.GetComponent<MeshRenderer>().material = terrainMaterial;
 
@@ -168,7 +170,7 @@ public static class IslandGenerator
             int u = (int)trees[ti].x - width / 2, v = (int)trees[ti].y - height / 2;
             int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize), j = (int)Mathf.Floor(trees[ti].y / mapChunkSize);
 
-            TreeEntity tree = new TreeEntity(treeMaterial, leavesMaterial);
+            TreeEntity tree = new TreeEntity(treeMaterial, leavesMaterial, true);
             islandChunks[i, j].AddTree(tree);
             tree.TreeObject.transform.position = new Vector3(u, heightMap[(int)trees[ti].x, (int)trees[ti].y] * meshHeightMultiplier, v);
             tree.TreeObject.transform.SetParent(islandChunks[i, j].ChunkObject.transform);
@@ -190,6 +192,7 @@ public static class IslandGenerator
                 terrainChunkMesh.normals = islandChunks[i, j].PlaneObject.GetMesh().normals;
                 terrainChunkMesh.RecalculateBounds();
                 terrainChunk.GetComponent<MeshFilter>().sharedMesh = terrainChunkMesh;
+                terrainChunk.GetComponent<MeshCollider>().sharedMesh = terrainChunkMesh;
             }
         }
     }

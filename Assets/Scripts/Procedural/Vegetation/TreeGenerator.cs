@@ -29,7 +29,7 @@ public class TreeGenerator : MonoBehaviour
     public void Start()
     {
         Random.InitState(3);
-        tree = new TreeEntity(treeMaterial, leavesMaterial);
+        tree = new TreeEntity(treeMaterial, leavesMaterial, true);
     }
 
     public void ChangeLOD() 
@@ -37,7 +37,7 @@ public class TreeGenerator : MonoBehaviour
         Random.InitState(3);
         if(tree == null)
         {
-            tree = new TreeEntity(treeMaterial, leavesMaterial);
+            tree = new TreeEntity(treeMaterial, leavesMaterial, true);
         }
         for(int i = 0; i < 1; i++) 
         {

@@ -23,7 +23,7 @@ public class GeneralNoiseParams
 [System.Serializable]
 public class PerlinNoiseParams
 {
-	[Range(1f, 100f)]
+	[Range(1f, 25f)]
 	[SerializeField] float noiseScale;
 	public float NoiseScale { get => noiseScale; }
 
@@ -149,7 +149,7 @@ public class MapGenerator : MonoBehaviour {
 	public void GenerateMap() {
 		float[,] noiseMap = Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, noiseFunction, noiseSettings);
 		AnimationCurve meshHeightCurve = noiseSettings.GeneralNoiseParams.MeshHeightCurve;
-		noiseMap = Noise.ApplyCurve(noiseMap, meshHeightCurve);
+		// noiseMap = Noise.ApplyCurve(noiseMap, meshHeightCurve);
 
 		MapDisplay display = FindObjectOfType<MapDisplay> ();
 		if (drawMode == DrawMode.NoiseMap) {

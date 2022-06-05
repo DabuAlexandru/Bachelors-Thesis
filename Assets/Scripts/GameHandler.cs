@@ -1,14 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameHandler : MonoBehaviour
 {
     Transform Player;
 
+    [SerializeReference] private Material skybox;
+
     void Start()
     {
         Player = GameObject.FindWithTag("Player").transform;
+
+        Scene scene = SceneManager.GetActiveScene();
+
+        if(scene.name == "DemoScene")
+            RenderSettings.skybox = skybox;
+            
         InitializePlayerPosition();
     }
 

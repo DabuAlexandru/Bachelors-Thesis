@@ -24,14 +24,14 @@ public static class GraphGenerator
 {
     private const float branchSeparationAngle = 40.0f; // the angle of separation from the main branch
     private const float rotationVariationAngle = 30.0f; // offset on the rotation angle to have some variation
-    private const float bezierHeight = 0.2f;
+    private const float bezierHeight = 0.1f;
     private const float bezierPointVariation = 0.2f;
     private const float budOriginPercent = 0.75f;
     private const float lengthReductionRate = 0.825f;
 
     private const float elevationY = -0.15f;
 
-    public static BranchGraphNode[] GenerateBranchGraph(int maxGrowthStep)
+    public static BranchGraphNode[] GenerateBranchGraph(int maxGrowthStep, bool applyCurves = false)
     {
         // every branch spurs two new branches, one extension and one new bud, so we have a binary tree
         BranchGraphNode[] branches = new BranchGraphNode[(int)Mathf.Pow(2.0f, maxGrowthStep + 1) - 1];
@@ -43,9 +43,9 @@ public static class GraphGenerator
             for(int j = pw - 1; j <= 2 * (pw - 1); j++)
             {
                 // the left leaf of the binary tree is represented by the bud on the side
-                branches[2 * j + 1] = GenerateBranchGraphNode(branches[j], false);
+                branches[2 * j + 1] = GenerateBranchGraphNode(branches[j], false, applyCurves);
                 // the right leaf is the extension of the current branch
-                branches[2 * j + 2] = GenerateBranchGraphNode(branches[j], true);
+                branches[2 * j + 2] = GenerateBranchGraphNode(branches[j], true, applyCurves);
             }
         }
         return branches;
@@ -71,7 +71,7 @@ public static class GraphGenerator
     static Vector3 ApplyRotationVariation(Vector3 direction) 
         => Quaternion.FromToRotation(Vector3.one, direction) * GetRotationVariation() * Vector3.one;
 
-    static BranchGraphNode GenerateBranchGraphNode(BranchGraphNode parent, bool expansion)
+    static BranchGraphNode GenerateBranchGraphNode(BranchGraphNode parent, bool expansion, bool applyCurves = false)
     {
         BranchGraphNode newNode = new BranchGraphNode();
         if(expansion)
@@ -81,7 +81,7 @@ public static class GraphGenerator
         }
         else
         {
-            newNode.budPosition = parent.GetPointLinear(budOriginPercent);
+            newNode.budPosition = applyCurves ? parent.GetPointBezier(budOriginPercent) : parent.GetPointLinear(budOriginPercent);
             float variationY = Random.Range(0.001f, 360.0f);
             newNode.growthDirection =
                 Quaternion.FromToRotation(Vector3.up, parent.growthDirection) *

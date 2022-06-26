@@ -7,6 +7,9 @@ public static class Constants
     public const int puzzleResolutionV = 30;
     public const string puzzleDataFile = "puzzle";
 
+    public const int maxLOD = 5;
+    public const float islandScale = 480f;
+
     // terrain constants
     public const int terrainResolutionU = 240;
     public const int terrainResolutionV = 240;

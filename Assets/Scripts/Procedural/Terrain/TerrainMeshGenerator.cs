@@ -7,22 +7,24 @@ using Vertex = Utils.Vertex;
 
 public static class TerrainMeshGenerator
 {
-    public static ProceduralPlaneMesh GenerateTerrainMesh(float[,] heightMap, int levelOfDetail = 0, float meshHeightMultiplier = 1.0f) {
+    public static ProceduralPlaneMesh GenerateTerrainMesh(float[,] heightMap, int levelOfDetail = 0, float meshHeightMultiplier = 1.0f)
+    {
         int resolution = heightMap.GetLength(0) - 1;
 
-        int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
-		int modifiedResolution = resolution / meshSimplificationIncrement;
+        int meshSimplificationIncrement = levelOfDetail + 1;
+        int modifiedResolution = resolution / meshSimplificationIncrement;
         float[,] rescaledHeightMap = new float[modifiedResolution + 1, modifiedResolution + 1];
-        
-        for(int u = 0; u <= modifiedResolution; u++)
+
+        for (int u = 0; u <= modifiedResolution; u++)
         {
-            for(int v = 0; v <= modifiedResolution; v++)
+            for (int v = 0; v <= modifiedResolution; v++)
             {
                 rescaledHeightMap[u, v] = heightMap[u * meshSimplificationIncrement, v * meshSimplificationIncrement];
             }
         }
         ProceduralPlaneMesh procPlaneMesh = new ProceduralPlaneMesh(modifiedResolution);
         procPlaneMesh.ApplyHeightMap(rescaledHeightMap, meshHeightMultiplier);
+        procPlaneMesh.UpdatePlaneMeshStructInfo();
         return procPlaneMesh;
     }
 
@@ -31,9 +33,9 @@ public static class TerrainMeshGenerator
         int resolution = heightMap.GetLength(0) - 1;
         Vector3[,] vertexNormals = new Vector3[resolution + 1, resolution + 1];
 
-        for(int v = 0; v < resolution; v++)
+        for (int v = 0; v < resolution; v++)
         {
-            for(int u = 0; u < resolution; u++)
+            for (int u = 0; u < resolution; u++)
             {
                 float x1 = (float)u / chunkResolution - 0.5f;
                 float x2 = (float)(u + 1) / chunkResolution - 0.5f;
@@ -54,9 +56,9 @@ public static class TerrainMeshGenerator
                 vertexNormals[u, v + 1] += triangleADCNormal; // D
             }
         }
-        for(int v = 0; v <= resolution; v++)
+        for (int v = 0; v <= resolution; v++)
         {
-            for(int u = 0; u <= resolution; u++)
+            for (int u = 0; u <= resolution; u++)
             {
                 vertexNormals[u, v].Normalize();
             }
@@ -73,13 +75,13 @@ public static class TerrainMeshGenerator
     }
 
     public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, DistributionParams distributionParams)
-        => GetTreesOnHeightMap(heightMap, distributionParams.MinTerrainHeight, distributionParams.MaxTerrainHeight, 
+        => GetTreesOnHeightMap(heightMap, distributionParams.MinTerrainHeight, distributionParams.MaxTerrainHeight,
             distributionParams.MaxElevationDifference, distributionParams.WindowSize, distributionParams.Variance, distributionParams.Randomize);
 
     public static Vector2[] GetTreesOnHeightMap(float[,] heightMap, float minTerrainHeight, float maxTerrainHeight, float maxElevationDifference, int windowSize = 1, int variance = 2, bool applyRandom = false)
     {
         int mapWidth = heightMap.GetLength(0), mapHeight = heightMap.GetLength(1);
- 
+
         int treeIndex = 0;
         int dirU = 1, dirV = 1; // the direction of the applied offset
 
@@ -98,13 +100,13 @@ public static class TerrainMeshGenerator
         Vector2[] treePositions = new Vector2[numPointsU * numPointsV];
 
         int offsetU = 0;
-        for(int v = windowSize; v < maxV; v += incremV)
+        for (int v = windowSize; v < maxV; v += incremV)
         {
             int offsetV = 0;
-            for(int u = windowSize; u < maxU; u += incremU)
+            for (int u = windowSize; u < maxU; u += incremU)
             {
                 int treeU = u + offsetU + emptySpaceU / 2, treeV = v + offsetV + emptySpaceV / 2;
-                if(applyRandom)
+                if (applyRandom)
                 {
                     treeU += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
                     treeV += (int)Random.Range(-(windowSize - 1), (windowSize - 1));
@@ -112,38 +114,38 @@ public static class TerrainMeshGenerator
 
                 float minHeight = heightMap[treeU, treeV], maxHeight = heightMap[treeU, treeV];
 
-                if(heightMap[treeU, treeV] >= minTerrainHeight && heightMap[treeU, treeV] <= maxTerrainHeight)
+                if (heightMap[treeU, treeV] >= minTerrainHeight && heightMap[treeU, treeV] <= maxTerrainHeight)
                 {
-                    for(int k = -1; k <= 1; k++)
+                    for (int k = -1; k <= 1; k++)
                     {
-                        for(int l = -1; l <= 1; l++)
+                        for (int l = -1; l <= 1; l++)
                         {
                             minHeight = Mathf.Min(heightMap[treeU + l, treeV + k], minHeight);
                             maxHeight = Mathf.Max(heightMap[treeU + l, treeV + k], maxHeight);
                         }
                     }
 
-                    if(maxHeight - minHeight <= maxElevationDifference) 
+                    if (maxHeight - minHeight <= maxElevationDifference)
                     {
                         treePositions[treeIndex] = new Vector2(treeU, treeV);
                         treeIndex++;
                     }
                 }
-                
-                if(variance > 0)
+
+                if (variance > 0)
                 {
                     offsetV += dirV;
-                    if(offsetV < 0 || offsetV > variance)
+                    if (offsetV < 0 || offsetV > variance)
                     {
                         dirV *= -1;
                         offsetV += 2 * dirV;
                     }
                 }
             }
-            if(variance > 0)
+            if (variance > 0)
             {
                 offsetU += dirU;
-                if(offsetU < 0 || offsetU > variance)
+                if (offsetU < 0 || offsetU > variance)
                 {
                     dirU *= -1;
                     offsetU += 2 * dirU;
@@ -152,7 +154,7 @@ public static class TerrainMeshGenerator
         }
 
         Vector2[] resizedTreePositions = new Vector2[treeIndex];
-        for(int i = 0; i < treeIndex; i++)
+        for (int i = 0; i < treeIndex; i++)
         {
             resizedTreePositions[i] = treePositions[i];
         }
@@ -160,9 +162,9 @@ public static class TerrainMeshGenerator
     }
 }
 
-public class ProceduralPlaneMesh 
+public class ProceduralPlaneMesh
 {
-    private Mesh planeMesh;
+    private MeshStruct planeMeshStruct;
     private int resolution;
     private int vertexCount;
     private int indexCount;
@@ -171,7 +173,7 @@ public class ProceduralPlaneMesh
 
     // specifications of the mesh
     private Bounds bounds = new Bounds(Vector3.zero, new Vector3(1.0f, 0.0f, 1.0f));
-        
+
     private const int vertexAttributeCount = 4; // four attributes: a position, a normal, a tangent, and a set of texture coordinates
 
     public ProceduralPlaneMesh(int resolution)
@@ -181,122 +183,121 @@ public class ProceduralPlaneMesh
         indexCount = 6 * resolution * resolution;
 
         InitializeProceduralMesh();
+        planeMeshStruct.ExtractInfoFromSelf();
     }
 
+    public void UpdatePlaneMeshStructInfo() => planeMeshStruct.ExtractInfoFromSelf();
     private void InitializeProceduralMesh()
     {
-        Mesh.MeshDataArray meshDataArray = Mesh.AllocateWritableMeshData(1);
-        Mesh.MeshData meshData = meshDataArray[0];
+        Vector3[] vertices = new Vector3[(resolution + 1) * (resolution + 1)];
+        Vector3[] normals = new Vector3[(resolution + 1) * (resolution + 1)];
+        Vector2[] uvs = new Vector2[(resolution + 1) * (resolution + 1)];
+        int[] triangles = new int[6 * resolution * resolution];
 
-        var vertexAttributes = new NativeArray<VertexAttributeDescriptor>(
-            vertexAttributeCount, Allocator.Temp, NativeArrayOptions.UninitializedMemory
-        );
-        vertexAttributes[0] = new VertexAttributeDescriptor(dimension: 3);
-        vertexAttributes[1] = new VertexAttributeDescriptor(
-            VertexAttribute.Normal, dimension: 3
-        );
-        vertexAttributes[2] = new VertexAttributeDescriptor(
-            VertexAttribute.Tangent, VertexAttributeFormat.Float16, 4
-        );
-        vertexAttributes[3] = new VertexAttributeDescriptor(
-            VertexAttribute.TexCoord0, VertexAttributeFormat.Float16, 2
-        );
-        meshData.SetVertexBufferParams(vertexCount, vertexAttributes);
-        vertexAttributes.Dispose();
-        NativeArray<Vertex> vertices = meshData.GetVertexData<Vertex>();
+        Vector3 position = new Vector3(), normal = new Vector3();
+        Vector2 texCoord0 = new Vector2();
 
-        meshData.SetIndexBufferParams(indexCount, IndexFormat.UInt16);
-        NativeArray<ushort> triangleIndices = meshData.GetIndexData<ushort>();
-
-        var vertex = new Vertex();
         int vi = 0, ti = 0;
         for (int v = 0; v <= resolution; v++)
         {
-            vertex.position.z = (float)v / resolution - 0.5f;
-            vertex.texCoord0.y = half((float)v / resolution);
+            position.z = (float)v / resolution - 0.5f;
+            texCoord0.y = (float)v / resolution;
 
-            vertex.normal.y = 1.0f;
-            vertex.tangent.xw = half2(half(1.0f), half(-1.0f));
+            normal.y = 1.0f;
+            // tangent.xw = half2(half(1.0f), half(-1.0f));
 
             for (int u = 0; u <= resolution; u++)
             {
-                vertex.position.x = (float)u / resolution - 0.5f;
-                vertex.texCoord0.x = half((float)u / resolution);
+                position.x = (float)u / resolution - 0.5f;
+                texCoord0.x = (float)u / resolution;
 
-                vertices[vi] = vertex;
+                vertices[vi] = position;
+                normals[vi] = normal;
+                uvs[vi] = texCoord0;
                 vi++;
 
                 if (v < resolution && u < resolution)
                 {
-                    int currentIndex = v * (resolution + 1) + u;
-                    int rightIndex = v * (resolution + 1) + (u + 1);
-                    int topRightIndex = (v + 1) * (resolution + 1) + (u + 1);
-                    int topIndex = (v + 1) * (resolution + 1) + u;
-
-                    triangleIndices[ti] = (ushort)currentIndex;
-                    triangleIndices[ti + 1] = (ushort)topRightIndex;
-                    triangleIndices[ti + 2] = (ushort)rightIndex;
-                    ti += 3;
-
-                    triangleIndices[ti] = (ushort)currentIndex;
-                    triangleIndices[ti + 1] = (ushort)topIndex;
-                    triangleIndices[ti + 2] = (ushort)topRightIndex;
-                    ti += 3;
+                    Utils.CalculateTriangles(triangles, ti, u, v, resolution);
+                    ti += 6;
                 }
             }
         }
-
-        meshData.subMeshCount = 1;
-        meshData.SetSubMesh(0, new SubMeshDescriptor(0, indexCount)
-        {
-            bounds = bounds,
-            vertexCount = vertexCount
-        }, MeshUpdateFlags.DontRecalculateBounds);
-
-        this.planeMesh = new Mesh
-        {
-            bounds = bounds,
-            name = "Procedural Mesh"
-        };
-
-        vertices.Dispose();
-        triangleIndices.Dispose();
-
-        Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, planeMesh);
+        Mesh planeMesh = new Mesh();
+        planeMesh.vertices = vertices;
+        planeMesh.normals = normals;
+        planeMesh.uv = uvs;
+        planeMesh.triangles = triangles;
+        this.planeMeshStruct.mesh = planeMesh;
     }
 
-    public void SetNormals(Vector3[] normals) => this.planeMesh.normals = normals;
+    public void SetNormals(Vector3[] normals) => this.planeMeshStruct.mesh.normals = normals;
 
-    public Mesh GetMesh() => this.planeMesh;
+    public Mesh GetMesh() => this.planeMeshStruct.mesh;
 
-    // public void ApplyHeightMapLOD(float[])
+    public void SimplifyMesh(int LOD = 0)
+    {
+        if (LOD == 0)
+        {
+            planeMeshStruct.ReconfigureMesh();
+            return;
+        }
+        int newRes = resolution / (LOD + 1);
+        int newVertexCount = (newRes + 1) * (newRes + 1);
+
+        Vector3[] vertices = new Vector3[newVertexCount];
+        Vector3[] normals = new Vector3[newVertexCount];
+        Vector2[] uvs = new Vector2[newVertexCount];
+
+        int vi = 0;
+        for (int v = 0; v <= resolution; v += (LOD + 1))
+        {
+            for (int u = 0; u <= resolution; u += (LOD + 1))
+            {
+                int globalVi = v * (resolution + 1) + u;
+                vertices[vi] = planeMeshStruct.vertices[globalVi];
+                normals[vi] = planeMeshStruct.normals[globalVi];
+                uvs[vi] = planeMeshStruct.uvs[globalVi];
+                vi++;
+            }
+        }
+        int[] triangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);
+        
+        Mesh objectMesh = planeMeshStruct.mesh;
+
+        objectMesh.Clear();
+        objectMesh.vertices = vertices;
+        objectMesh.normals = normals;
+        objectMesh.uv = uvs;
+        objectMesh.triangles = triangles;
+    }
 
     public void ApplyHeightMap(float[,] heightMap, float amplitude = 1.0f)
     {
-        Vector3[] myVertices = planeMesh.vertices;
+        Vector3[] myVertices = planeMeshStruct.mesh.vertices;
         int vi = 0;
-        for(int v = 0; v <= resolution; v++)
+        for (int v = 0; v <= resolution; v++)
         {
-            for(int u = 0; u <= resolution; u++)
+            for (int u = 0; u <= resolution; u++)
             {
-                myVertices[vi].y = amplitude * heightMap[u,v];
+                myVertices[vi].y = amplitude * heightMap[u, v];
                 vi++;
             }
         }
 
-        planeMesh.vertices = myVertices;
-        planeMesh.RecalculateNormals();
-        planeMesh.RecalculateBounds();
+        planeMeshStruct.mesh.vertices = myVertices;
+        planeMeshStruct.mesh.RecalculateNormals();
+        planeMeshStruct.mesh.RecalculateBounds();
     }
 
     public float[,] ExtractHeightMap()
     {
-        Vector3[] myVertices = planeMesh.vertices;
+        Vector3[] myVertices = planeMeshStruct.mesh.vertices;
         float[,] heightMap = new float[resolution + 1, resolution + 1];
         int vi = 0;
-        for(int v = 0; v <= resolution; v++)
+        for (int v = 0; v <= resolution; v++)
         {
-            for(int u = 0; u <= resolution; u++)
+            for (int u = 0; u <= resolution; u++)
             {
                 heightMap[u, v] = myVertices[vi].y;
                 vi++;

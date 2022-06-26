@@ -136,9 +136,9 @@ public class MapGenerator : MonoBehaviour {
 
 	[SerializeField] DistributionParams distributionParams;
 
-	const int mapChunkSize = 120;
-	const int islandChunkSize = 120;
-	const int islandChunkCount = 4;
+	const int mapChunkSize = 240;
+	const int islandChunkSize = 60;
+	const int islandChunkCount = 6;
 
 	[SerializeField] NoiseSettings noiseSettings;
 
@@ -169,6 +169,9 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
+	public void GenerateIsland()
+		=> IslandGenerator.GenerateIsland(islandChunkCount, islandChunkSize, noiseSettings, distributionParams, noiseFunction, terrainMaterial, treeMaterial, leavesMaterial);
+
 	private float[,] GenerateNoiseMap()
 	{
 		int seed = noiseSettings.GeneralNoiseParams.Seed;
@@ -188,5 +191,6 @@ public class MapGenerator : MonoBehaviour {
 		return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, noiseSettings.PerlinNoiseParams);
 	}
 
-	private void OnEnable() => GenerateMap();
+	// private void OnEnable() => GenerateMap();
+	private void Awake() => GenerateMap();
 }

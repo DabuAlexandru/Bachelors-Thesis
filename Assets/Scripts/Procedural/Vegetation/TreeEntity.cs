@@ -2,16 +2,6 @@ using UnityEngine;
 // using Unity.Mathematics;
 using static Unity.Mathematics.math;
 
-public struct MeshStruct
-{
-    public Mesh mesh;
-
-    public Vector3[] vertices;
-    public Vector3[] normals;
-    public Vector2[] uvs;
-    public int[] triangles;
-}
-
 public class TreeEntity
 {
     const int resolutionU = 12;
@@ -68,27 +58,12 @@ public class TreeEntity
                 vi++;
             }
         }
-        int[] triangles = GetTrianglesFromCircularMesh(resU / (LOD + 1), resV / (LOD + 1));
+        int[] triangles = Utils.GetTrianglesFromCircularMesh(resU / (LOD + 1), resV / (LOD + 1));
 
         objectMesh.vertices = vertices;
         objectMesh.normals = normals;
         objectMesh.uv = uvs;
         objectMesh.triangles = triangles;
-    }
-
-    private int[] GetTrianglesFromCircularMesh(int resU, int resV)
-    {
-        int[] triangles = new int[6 * resU * resV];
-        int ti = 0;
-        for (int v = 0; v < resV; v++)
-        {
-            for (int u = 0; u < resU; u++)
-            {
-                CalculateTriangles(triangles, ti, u, v, resU);
-                ti += 6;
-            }
-        }
-        return triangles;
     }
 
     public TreeEntity(Material treeMaterial, Material leavesMaterial, bool applyCurves = false)
@@ -388,7 +363,7 @@ public class TreeEntity
 
                 if (v < resolutionV && u < resolutionU)
                 {
-                    CalculateTriangles(branchMesh.triangles, ti, u, v, resolutionU);
+                    Utils.CalculateTriangles(branchMesh.triangles, ti, u, v, resolutionU);
                     ti += 6;
                 }
             }
@@ -419,31 +394,12 @@ public class TreeEntity
 
                 if (v < resolutionV && u < resolutionU)
                 {
-                    CalculateTriangles(leavesMesh.triangles, ti, u, v, resolutionU);
+                    Utils.CalculateTriangles(leavesMesh.triangles, ti, u, v, resolutionU);
                     ti += 6;
                 }
             }
         }
 
         return leavesMesh;
-    }
-
-    // function that calculates the two triangles of a square from a mesh
-    private void CalculateTriangles(int[] triangles, int ti, int u, int v, int resU)
-    {
-        int currentIndex = v * (resU + 1) + u;
-        int rightIndex = v * (resU + 1) + (u + 1);
-        int topRightIndex = (v + 1) * (resU + 1) + (u + 1);
-        int topIndex = (v + 1) * (resU + 1) + u;
-
-        triangles[ti] = currentIndex;
-        triangles[ti + 1] = topRightIndex;
-        triangles[ti + 2] = rightIndex;
-        ti += 3;
-
-        triangles[ti] = currentIndex;
-        triangles[ti + 1] = topIndex;
-        triangles[ti + 2] = topRightIndex;
-        ti += 3;
     }
 }

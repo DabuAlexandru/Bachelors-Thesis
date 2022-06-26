@@ -14,23 +14,7 @@ public class MapDisplay : MonoBehaviour {
 	{
 		Mesh planeMesh = terrainObj.GetMesh();
 		meshFilter.sharedMesh = terrainObj.GetMesh();
-		SpawnTrees(terrainObj);
 		meshCollider.sharedMesh = planeMesh;
-	}
-
-	public void SpawnTrees(ProceduralPlaneMesh terrainObj)
-	{
-		// float[,] heightMap = terrainObj.ExtractHeightMap();
-		// Mesh planeMesh = terrainObj.GetMesh();
-		// Vector3[] vertices = planeMesh.vertices;
-		// int n = vertices.Length;
-		// for(int i = 0; i < n; i++)
-		// {
-		// 	if(i % 4 == 0)
-		// 	{
-
-		// 	}
-		// }
 	}
 
 }

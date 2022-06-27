@@ -168,6 +168,11 @@ public class ProceduralPlaneMesh
     private int resolution;
     private int vertexCount;
     private int indexCount;
+    private int marginVertexCount;
+    private int marginIndexCount;
+
+    private Vector3[] marginVertices;
+    private int[] marginTriangles;
 
     private MeshFilter meshFilter;
 
@@ -181,6 +186,9 @@ public class ProceduralPlaneMesh
         this.resolution = resolution;
         vertexCount = (resolution + 1) * (resolution + 1);
         indexCount = 6 * resolution * resolution;
+
+        marginVertexCount = 8 * (resolution - 1);
+        marginIndexCount = 6 * 4 * (resolution - 1);
 
         InitializeProceduralMesh();
         planeMeshStruct.ExtractInfoFromSelf();
@@ -235,6 +243,8 @@ public class ProceduralPlaneMesh
 
     public Mesh GetMesh() => this.planeMeshStruct.mesh;
 
+    private bool OnMargin(int x, int res) => (x < 1 || x > resolution - 1);
+
     public void SimplifyMesh(int LOD = 0)
     {
         if (LOD == 0)
@@ -242,17 +252,18 @@ public class ProceduralPlaneMesh
             planeMeshStruct.ReconfigureMesh();
             return;
         }
-        int newRes = resolution / (LOD + 1);
-        int newVertexCount = (newRes + 1) * (newRes + 1);
+        int newRes = (resolution - 2) / (LOD + 1);
+        int newVertexCount = marginVertexCount + (newRes - 1) * (newRes - 1);
+        int newIndexCount = marginIndexCount + 6 * newRes * newRes;
 
         Vector3[] vertices = new Vector3[newVertexCount];
         Vector3[] normals = new Vector3[newVertexCount];
         Vector2[] uvs = new Vector2[newVertexCount];
 
         int vi = 0;
-        for (int v = 0; v <= resolution; v += (LOD + 1))
+        for (int v = 0; v <= resolution; v++)
         {
-            for (int u = 0; u <= resolution; u += (LOD + 1))
+            for (int u = 0; u <= resolution; u++)
             {
                 int globalVi = v * (resolution + 1) + u;
                 vertices[vi] = planeMeshStruct.vertices[globalVi];
@@ -262,7 +273,7 @@ public class ProceduralPlaneMesh
             }
         }
         int[] triangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);
-        
+
         Mesh objectMesh = planeMeshStruct.mesh;
 
         objectMesh.Clear();

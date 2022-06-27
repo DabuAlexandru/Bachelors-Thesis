@@ -46,6 +46,8 @@ public static class IslandGenerator
 
     }
 
+    private static bool[,] occupiedMap;
+
     private static IslandChunk[,] islandChunks;
 
     private static float islandObjectScale;
@@ -64,6 +66,7 @@ public static class IslandGenerator
         int mapResolution = resolution * mapChunkSize;
 
         heightMap = new float[mapResolution + 1, mapResolution + 1];
+        occupiedMap = new bool[mapResolution + 1, mapResolution + 1];
 
         if (noiseFunction == NoiseFunction.Perlin)
         {
@@ -121,11 +124,88 @@ public static class IslandGenerator
                 islandChunks[i, j].PlaneObject.SetNormals(chunkVertexNormals);
             }
         }
+
         if (island == null)
             InitializeIslandObject(terrainMaterial, heightMap, meshHeightMultiplier);
         Vector2[] trees = TerrainMeshGenerator.GetTreesOnHeightMap(heightMap, distributionParams);
+        Vector2 newPos = new Vector2();
+        Random.InitState((int)Time.time);
+        foreach (Vector2 tree in trees)
+        {
+            occupiedMap[(int)tree.x, (int)tree.y] = true;
+            for (int i = 0; i < Constants.neighbours.Length; i++)
+            {
+                newPos = tree + Constants.neighbours[i];
+                occupiedMap[(int)newPos.x, (int)newPos.y] = true;
+            }
+        }
         AddTreesToIsland(trees, treeMaterial, leavesMaterial, heightMap, meshHeightMultiplier);
         UpdateChunkMeshes();
+    }
+
+    public static Vector3[] GetEmptyPlaces(int count)
+    {
+        Vector3[] positions = new Vector3[count];
+        float maxElevationDifference = 0.02f;
+        int index = 0;
+        for (int i = 0; i < count; i++)
+        {
+            while (index < count)
+            {
+                int randU = Random.Range(1, resolution - 2);
+                int randV = Random.Range(1, resolution - 2);
+                bool shouldBreak = false;
+                for (int offsetY = Random.Range(0, mapChunkSize / 2); offsetY < mapChunkSize; offsetY += 4)
+                {
+                    for (int offsetX = Random.Range(0, mapChunkSize / 2); offsetX < mapChunkSize; offsetX += 4)
+                    {
+                        Vector2 newPos = new Vector2(offsetX + randU * mapChunkSize, offsetY + randV * mapChunkSize + 1);
+                        if (!occupiedMap[(int)newPos.x, (int)newPos.y] && heightMap[(int)newPos.x, (int)newPos.y] < 0.35f)
+                        {
+                            for (int k = 0; k <= index; k++)
+                            {
+                                Vector2 a = new Vector2(MapToWorldCoord(newPos.x), MapToWorldCoord(newPos.y));
+                                Vector2 b = new Vector2(positions[k].x, positions[k].z);
+                                if (Vector2.Distance(a, b) < mapChunkSize / 2)
+                                {
+                                    shouldBreak = true;
+                                    break;
+                                }
+                            }
+                            if (shouldBreak) break;
+
+                            float minHeight = heightMap[(int)newPos.x, (int)newPos.y], maxHeight = heightMap[(int)newPos.x, (int)newPos.y];
+
+                            for (int k = -1; k <= 1; k++)
+                            {
+                                for (int l = -1; l <= 1; l++)
+                                {
+                                    minHeight = Mathf.Min(heightMap[(int)newPos.x + l, (int)newPos.y + k], minHeight);
+                                    maxHeight = Mathf.Max(heightMap[(int)newPos.x + l, (int)newPos.y + k], maxHeight);
+                                }
+                            }
+
+                            if (maxHeight - minHeight > maxElevationDifference) break;
+
+                            occupiedMap[(int)newPos.x, (int)newPos.y] = true;
+                            for (int k = 0; k < Constants.neighbours.Length; k++)
+                            {
+                                Vector2 neighPos = newPos + Constants.neighbours[k];
+                                occupiedMap[(int)neighPos.x, (int)neighPos.y] = true;
+                            }
+                            positions[index] = new Vector3(MapToWorldCoord(newPos.x), meshHeightMultiplier * heightMap[(int)newPos.x, (int)newPos.y] + 1f, MapToWorldCoord(newPos.y));
+                            index++;
+                            shouldBreak = true;
+                            break;
+                        }
+                    }
+                    if (shouldBreak) break;
+                }
+            }
+
+        }
+
+        return positions;
     }
 
     public static Vector2 GetCoordsOnMap(Transform transform)
@@ -143,7 +223,7 @@ public static class IslandGenerator
         int halfSize = (int)resolution * mapChunkSize / 2;
         float chunkU = (WorldToMapCoord(x) + halfSize) / mapChunkSize;
         float chunkV = (WorldToMapCoord(z) + halfSize) / mapChunkSize;
-        
+
         chunkU -= Mathf.Floor(chunkU);
         chunkV -= Mathf.Floor(chunkV);
 
@@ -166,7 +246,7 @@ public static class IslandGenerator
             }
         }
         mapLOD[(int)mapCoords.x, (int)mapCoords.y] = 0;
-        Vector2[] neighbours = { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
         Queue<Vector2> cells = new Queue<Vector2>();
         cells.Enqueue(new Vector2(mapCoords.x, mapCoords.y));
         Vector2 newPos = new Vector2();
@@ -196,9 +276,9 @@ public static class IslandGenerator
         {
             Vector2 currentCell = cells.Dequeue();
             int newLOD = mapLOD[(int)currentCell.x, (int)currentCell.y] + 1;
-            for (int i = 0; i < neighbours.Length; i++)
+            for (int i = 0; i < Constants.neighbours.Length; i++)
             {
-                newPos = currentCell + neighbours[i];
+                newPos = currentCell + Constants.neighbours[i];
                 if (IsValidPos(mapLOD, newPos))
                 {
                     if (mapLOD[(int)newPos.x, (int)newPos.y] > newLOD)
@@ -328,7 +408,7 @@ public static class IslandGenerator
         {
             int u = (int)MapToWorldCoord(trees[ti].x),
                 v = (int)MapToWorldCoord(trees[ti].y);
-            int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize), 
+            int i = (int)Mathf.Floor(trees[ti].x / mapChunkSize),
                 j = (int)Mathf.Floor(trees[ti].y / mapChunkSize);
 
             TreeEntity tree = new TreeEntity(treeMaterial, leavesMaterial, true);

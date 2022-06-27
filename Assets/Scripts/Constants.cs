@@ -14,6 +14,8 @@ public static class Constants
     public const int terrainResolutionU = 240;
     public const int terrainResolutionV = 240;
 
+    public static Vector2[] neighbours = { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(0, 1) };
+
     public static float Frac(float x) => Mathf.Abs(x % 1);
 
     public static Vector2 Vector2Modulo(Vector2 vec, int exp) => new Vector2(vec.x % exp, vec.y % exp);

@@ -56,6 +56,7 @@ public static class IslandGenerator
         NoiseFunction noiseFunction, Material terrainMaterial, Material treeMaterial, Material leavesMaterial
     )
     {
+        Random.InitState((int)Time.time); 
         IslandGenerator.resolution = resolution;
         IslandGenerator.mapChunkSize = mapChunkSize;
 
@@ -122,6 +123,7 @@ public static class IslandGenerator
                 }
                 islandChunks[i, j].PlaneObject = TerrainMeshGenerator.GenerateTerrainMesh(chunkHeightMap, 0, meshHeightMultiplier);
                 islandChunks[i, j].PlaneObject.SetNormals(chunkVertexNormals);
+                // islandChunks[i, j].PlaneObject
             }
         }
 

@@ -1,9 +1,4 @@
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
-using static Unity.Mathematics.math;
-
-using Vertex = Utils.Vertex;
 
 public static class TerrainMeshGenerator
 {
@@ -231,7 +226,11 @@ public class ProceduralPlaneMesh
         this.planeMeshStruct.mesh = planeMesh;
     }
 
-    public void SetNormals(Vector3[] normals) => this.planeMeshStruct.mesh.normals = normals;
+    public void SetNormals(Vector3[] normals)
+    {
+        this.planeMeshStruct.mesh.normals = normals;
+        this.planeMeshStruct.normals = normals;
+    }
 
     public Mesh GetMesh() => this.planeMeshStruct.mesh;
 
@@ -262,7 +261,7 @@ public class ProceduralPlaneMesh
             }
         }
         int[] triangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);
-        
+
         Mesh objectMesh = planeMeshStruct.mesh;
 
         objectMesh.Clear();

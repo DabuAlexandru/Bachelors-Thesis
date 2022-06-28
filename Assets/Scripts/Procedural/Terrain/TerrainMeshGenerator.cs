@@ -269,7 +269,8 @@ public class ProceduralPlaneMesh
             {
                 bool addTriangles = false;
                 int globalVi = v * (resolution + 1) + u;
-                if ((v - 1) % (LOD + 1) == 0 && (u - 1) % (LOD + 1) == 0)
+                bool chunkVertex = (v - 1) % (LOD + 1) == 0 && (u - 1) % (LOD + 1) == 0;
+                if (chunkVertex)
                 {
                     vertices[vi] = planeMeshStruct.vertices[globalVi];
                     normals[vi] = planeMeshStruct.normals[globalVi];
@@ -279,6 +280,29 @@ public class ProceduralPlaneMesh
                 if ((u < 2 || u > resolution - 2) || (v < 2 || v > resolution - 2))
                 {
                     vertices[mVi] = planeMeshStruct.vertices[globalVi];
+                    if (!chunkVertex)
+                    {
+                        if ((v == 1 || v == resolution - 1) && !(u == 0 || u == resolution))
+                        {
+                            int r = (u - 1) % (LOD + 1);
+                            float pr = (float)r / (LOD + 1);
+                            int indexA = v * (resolution + 1) + (u - r);
+                            int indexB = v * (resolution + 1) + (u + (LOD + 1) - r);
+                            
+                            float newHeight = (1 - pr) * planeMeshStruct.vertices[indexA].y + (pr) * planeMeshStruct.vertices[indexB].y;
+                            vertices[mVi].y = newHeight;
+                        }
+                        if ((u == 1 || u == resolution - 1) && !(v == 0 || v == resolution))
+                        {
+                            int r = (v - 1) % (LOD + 1);
+                            float pr = (float)r / (LOD + 1);
+                            int indexA = (v - r) * (resolution + 1) + u;
+                            int indexB = (v + (LOD + 1) - r) * (resolution + 1) + u;
+                            
+                            float newHeight = (1 - pr) * planeMeshStruct.vertices[indexA].y + (pr) * planeMeshStruct.vertices[indexB].y;
+                            vertices[mVi].y = newHeight;
+                        }
+                    }
                     normals[mVi] = planeMeshStruct.normals[globalVi];
                     uvs[mVi] = planeMeshStruct.uvs[globalVi];
                     mVi++;

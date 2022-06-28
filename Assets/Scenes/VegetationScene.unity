@@ -1117,6 +1117,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 1234949338}
   moveSpeed: 4
+  maxSpeed: 4
+  drag: 0.01
   jumpForce: 2
   gravityForce: 9.81
   turnSmoothness: 0.1

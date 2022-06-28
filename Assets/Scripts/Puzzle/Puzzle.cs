@@ -34,27 +34,23 @@ public class Puzzle : MonoBehaviour
     const float radiusModifyRate = 0.5f;
     const int numberOfAffectedNeighbourPairs = 4;
 
-    [SerializeField, Range(80.0f, 99.0f)]
-    float minValidScore = 95.0f;
+    [SerializeField, Range(80.0f, 99.0f)] float minValidScore = 95.0f;
 
-    [SerializeField]
-    bool isPreview = false;
+    [SerializeField] bool isPreview = false;
 
-    [SerializeField]
-    bool isEditable = false;
+    [SerializeField] bool isEditable = false;
 
-    [SerializeField, Range(5, 50)]
-    int steps = 5;
+    [SerializeField, Range(5, 50)] int steps = 5;
 
     private const float minIntensity = 0.5f;
 
-    [SerializeField, Range(minIntensity, 7.0f)]
-    float maxIntesity = 5.0f;
+    [SerializeField, Range(minIntensity, 7.0f)] float maxIntesity = 5.0f;
 
     private Vector3[] verticesInitialPos;
-    public Button submitButton;
-    public Button resetButton;
-    public TMP_Text similarityText;
+    [SerializeReference] private Button submitButton;
+    [SerializeReference] private Button resetButton;
+    [SerializeReference] private TMP_Text similarityText;
+    [SerializeReference] private TMP_Text goalText;
 
     void Update()
     {
@@ -80,6 +76,12 @@ public class Puzzle : MonoBehaviour
         similarityText.SetText("Similarity: " + similarity + "%");
     }
 
+    void UpdateGoalText()
+    {
+        string goal = minValidScore.ToString("0.00");
+        goalText.SetText("Goal: " + goal + "%");
+    }
+
     void OnEnable()
     {
         puzzleColumn = new SingleStreamCylindricalProceduralMesh(GetComponent<MeshFilter>());
@@ -94,6 +96,7 @@ public class Puzzle : MonoBehaviour
             PuzzleDataUtils.InitializeRingConfig(ringRadiusPercentages);
             InitializePuzzleData(columnID);
             UpdateSimilarityText();
+            UpdateGoalText();
             SetButtonsEvents();
         }
         if(SavePuzzleData.instance.puzzleCollection.ContainsKey(columnID))

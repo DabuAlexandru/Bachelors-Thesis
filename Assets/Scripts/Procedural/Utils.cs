@@ -26,6 +26,16 @@ public struct MeshStruct
         mesh.uv = uvs;
         mesh.triangles = triangles;
     }
+
+    public Mesh GetMeshFromInfo()
+    {
+        Mesh newMesh = new Mesh();
+        newMesh.vertices = vertices;
+        newMesh.normals = normals;
+        newMesh.uv = uvs;
+        newMesh.triangles = triangles;
+        return newMesh;
+    }
 }
 
 public static class Utils

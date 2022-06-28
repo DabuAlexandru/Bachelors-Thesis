@@ -4,9 +4,7 @@ using System.Collections.Generic;
 public class SimpleCharacterControl : MonoBehaviour
 {
     CharacterController controller;
-    [SerializeReference] Transform camera;
     [SerializeField] float moveSpeed = 2f;
-    [SerializeField] float maxSpeed = 4f;
     [SerializeField] float drag = 0.01f;
     [SerializeField] float jumpForce = 4f;
     [SerializeField] float gravityForce = 9.81f;
@@ -14,7 +12,7 @@ public class SimpleCharacterControl : MonoBehaviour
     [SerializeField] float acceleration = .25f;
     [SerializeField] private Animator animator = null;
     [SerializeReference] private LayerMask terrainMask;
-    private 
+    private Transform cameraTransform;
     float halfHeight;
     float turnSmoothVelocity;
     float procAcc;
@@ -38,6 +36,7 @@ public class SimpleCharacterControl : MonoBehaviour
         canJump = isGrounded;
         halfHeight = controller.skinWidth + controller.height / 2f;
         procAcc = 0f;
+        cameraTransform = Camera.main.transform;
     }
 
     private bool CheckGrounded()
@@ -76,7 +75,7 @@ public class SimpleCharacterControl : MonoBehaviour
 
         if (dir.magnitude >= movEpsilon)
         {
-            float target = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + camera.eulerAngles.y;
+            float target = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothVelocity, turnSmoothness);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 

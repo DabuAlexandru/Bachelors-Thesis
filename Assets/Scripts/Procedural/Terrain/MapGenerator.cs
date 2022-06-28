@@ -197,6 +197,5 @@ public class MapGenerator : MonoBehaviour
         return Noise.GenerateHeightMap(mapChunkSize, mapChunkSize, seed, noiseSettings.PerlinNoiseParams);
     }
 
-    // private void OnEnable() => GenerateMap();
     private void Awake() => GenerateMap();
 }

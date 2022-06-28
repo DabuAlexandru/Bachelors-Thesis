@@ -126,7 +126,7 @@ public static class IslandGenerator
         }
 
         if (island == null)
-            InitializeIslandObject(terrainMaterial, heightMap, meshHeightMultiplier);
+            InitializeIslandObject(terrainMaterial);
         Vector2[] trees = TerrainMeshGenerator.GetTreesOnHeightMap(heightMap, distributionParams);
         Vector2 newPos = new Vector2();
         Random.InitState((int)Time.time);
@@ -372,7 +372,7 @@ public static class IslandGenerator
         return b * b - (u + v);
     }
 
-    private static void InitializeIslandObject(Material terrainMaterial, float[,] heightMap, float meshHeightMultiplier)
+    private static void InitializeIslandObject(Material terrainMaterial)
     {
         island = new GameObject("Island");
 
@@ -433,8 +433,8 @@ public static class IslandGenerator
                 terrainChunkMesh = islandChunks[i, j].PlaneObject.GetMesh();
                 terrainChunkMesh.normals = islandChunks[i, j].PlaneObject.GetMesh().normals;
                 terrainChunkMesh.RecalculateBounds();
-                terrainChunk.GetComponent<MeshFilter>().sharedMesh = terrainChunkMesh;
-                terrainChunk.GetComponent<MeshCollider>().sharedMesh = terrainChunkMesh;
+                terrainChunk.GetComponent<MeshFilter>().mesh = terrainChunkMesh;
+                terrainChunk.GetComponent<MeshCollider>().sharedMesh = islandChunks[i, j].PlaneObject.GetMeshFromInfo();
             }
         }
     }

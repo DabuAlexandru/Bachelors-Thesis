@@ -176,6 +176,8 @@ public class ProceduralPlaneMesh
 
     private const int vertexAttributeCount = 4; // four attributes: a position, a normal, a tangent, and a set of texture coordinates
 
+    public Mesh GetMeshFromInfo() => planeMeshStruct.GetMeshFromInfo();
+
     public ProceduralPlaneMesh(int resolution)
     {
         this.resolution = resolution;

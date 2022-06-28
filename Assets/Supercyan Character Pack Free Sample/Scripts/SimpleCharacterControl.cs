@@ -11,11 +11,13 @@ public class SimpleCharacterControl : MonoBehaviour
     [SerializeField] float jumpForce = 4f;
     [SerializeField] float gravityForce = 9.81f;
     [SerializeField] float turnSmoothness = .1f;
+    [SerializeField] float acceleration = .25f;
     [SerializeField] private Animator animator = null;
     [SerializeReference] private LayerMask terrainMask;
     private 
     float halfHeight;
     float turnSmoothVelocity;
+    float procAcc;
     const float movEpsilon = 0.1f;
     private bool isGrounded;
     private bool wasGrounded;
@@ -35,6 +37,7 @@ public class SimpleCharacterControl : MonoBehaviour
         wasGrounded = isGrounded;
         canJump = isGrounded;
         halfHeight = controller.skinWidth + controller.height / 2f;
+        procAcc = 0f;
     }
 
     private bool CheckGrounded()
@@ -58,21 +61,6 @@ public class SimpleCharacterControl : MonoBehaviour
         return false;
     }
 
-    private float ApplyDrag(float veloc)
-    {
-        float modifiedDrag = drag * Time.deltaTime;
-        float sign = Mathf.Sign(veloc);
-        if (Mathf.Abs(veloc) - modifiedDrag < 0)
-        {
-            veloc = 0f;
-        }
-        else
-        {
-            veloc -= sign * drag;
-        }
-        return veloc;
-    }
-
     private void HandlePlayerMovement()
     {
         float movX = Input.GetAxisRaw("Horizontal");
@@ -83,9 +71,7 @@ public class SimpleCharacterControl : MonoBehaviour
         if (isGrounded)
         {
             float modifiedDrag = drag * Time.deltaTime;
-
-            velocity.x = ApplyDrag(velocity.x);
-            velocity.z = ApplyDrag(velocity.z);
+            procAcc = Mathf.Max(0f, procAcc - modifiedDrag);
         }
 
         if (dir.magnitude >= movEpsilon)
@@ -99,10 +85,11 @@ public class SimpleCharacterControl : MonoBehaviour
 
             velocity.x = movement.x;
             velocity.z = movement.z;
-            controller.Move(movDir * moveSpeed * Time.deltaTime);
+            procAcc = Mathf.Min(procAcc + acceleration, 1f);
         }
-
-        animator.SetFloat("MoveSpeed", dir.magnitude);
+        Vector3 mov = new Vector3(velocity.x * procAcc, 0.0f, velocity.z * procAcc);
+        controller.Move(mov);
+        animator.SetFloat("MoveSpeed", moveSpeed * procAcc);
     }
 
     private void HandlePlayerJump()

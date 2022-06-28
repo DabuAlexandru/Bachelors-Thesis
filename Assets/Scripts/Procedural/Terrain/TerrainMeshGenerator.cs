@@ -253,23 +253,28 @@ public class ProceduralPlaneMesh
             return;
         }
         int newRes = (resolution - 2) / (LOD + 1);
-        int newVertexCount = marginVertexCount + (newRes - 1) * (newRes - 1);
+        marginVertexCount = 0;
+        int newVertexCount = marginVertexCount + (newRes + 1) * (newRes + 1);
         int newIndexCount = marginIndexCount + 6 * newRes * newRes;
 
         Vector3[] vertices = new Vector3[newVertexCount];
         Vector3[] normals = new Vector3[newVertexCount];
         Vector2[] uvs = new Vector2[newVertexCount];
 
-        int vi = 0;
+        int vi = marginVertexCount, mVi = 0; // margin vertex index
         for (int v = 0; v <= resolution; v++)
         {
             for (int u = 0; u <= resolution; u++)
             {
                 int globalVi = v * (resolution + 1) + u;
-                vertices[vi] = planeMeshStruct.vertices[globalVi];
-                normals[vi] = planeMeshStruct.normals[globalVi];
-                uvs[vi] = planeMeshStruct.uvs[globalVi];
-                vi++;
+                if ((v - 1) % (LOD + 1) == 0 && (u - 1) % (LOD + 1) == 0)
+                {
+                    Debug.Log(globalVi);
+                    vertices[vi] = planeMeshStruct.vertices[globalVi];
+                    normals[vi] = planeMeshStruct.normals[globalVi];
+                    uvs[vi] = planeMeshStruct.uvs[globalVi];
+                    vi++;
+                }
             }
         }
         int[] triangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);

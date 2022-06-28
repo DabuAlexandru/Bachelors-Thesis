@@ -252,31 +252,78 @@ public class ProceduralPlaneMesh
             return;
         }
         int newRes = (resolution - 2) / (LOD + 1);
-        marginVertexCount = 0;
         int newVertexCount = marginVertexCount + (newRes + 1) * (newRes + 1);
         int newIndexCount = marginIndexCount + 6 * newRes * newRes;
 
         Vector3[] vertices = new Vector3[newVertexCount];
         Vector3[] normals = new Vector3[newVertexCount];
         Vector2[] uvs = new Vector2[newVertexCount];
+        int[] triangles = new int[newIndexCount];
 
         int vi = marginVertexCount, mVi = 0; // margin vertex index
+        int mTi = 0; // margin triangles index
+        int currVertIndex = 0;
         for (int v = 0; v <= resolution; v++)
         {
             for (int u = 0; u <= resolution; u++)
             {
+                bool addTriangles = false;
                 int globalVi = v * (resolution + 1) + u;
                 if ((v - 1) % (LOD + 1) == 0 && (u - 1) % (LOD + 1) == 0)
                 {
-                    Debug.Log(globalVi);
                     vertices[vi] = planeMeshStruct.vertices[globalVi];
                     normals[vi] = planeMeshStruct.normals[globalVi];
                     uvs[vi] = planeMeshStruct.uvs[globalVi];
                     vi++;
                 }
+                if ((u < 2 || u > resolution - 2) || (v < 2 || v > resolution - 2))
+                {
+                    vertices[mVi] = planeMeshStruct.vertices[globalVi];
+                    normals[mVi] = planeMeshStruct.normals[globalVi];
+                    uvs[mVi] = planeMeshStruct.uvs[globalVi];
+                    mVi++;
+                }
+
+                int offset = 0;
+                if (v == resolution) continue;
+                if (u == resolution) { currVertIndex++; continue; }
+                if (v == 0 || (v == 1 && u == 0))
+                {
+                    addTriangles = true;
+                    offset = (resolution + 1);
+                }
+                else if (v == resolution - 1 || (v == resolution - 2 && u == resolution - 1))
+                {
+                    addTriangles = true;
+                    offset = (resolution + 1);
+                }
+                else if (u == 0 || u == resolution - 1)
+                {
+                    addTriangles = true;
+                    offset = 4;
+                }
+                else if ((u == 1) || (v == 1 && (u >= 2 || u <= resolution - 2)))
+                {
+                    currVertIndex++;
+                }
+
+                if (addTriangles)
+                {
+                    int currentIndex = currVertIndex;
+                    int rightIndex = currVertIndex + 1;
+                    int topRightIndex = currVertIndex + offset + 1;
+                    int topIndex = currentIndex + offset;
+                    Utils.AssignTriangles(triangles, mTi, currentIndex, rightIndex, topRightIndex, topIndex);
+                    mTi += 6;
+                    currVertIndex++;
+                }
             }
         }
-        int[] triangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);
+        int[] chunkTriangles = Utils.GetTrianglesFromCircularMesh(newRes, newRes);
+        for (int i = 0; i < chunkTriangles.Length; i++)
+        {
+            triangles[i + marginIndexCount] = chunkTriangles[i] + marginVertexCount;
+        }
 
         Mesh objectMesh = planeMeshStruct.mesh;
 

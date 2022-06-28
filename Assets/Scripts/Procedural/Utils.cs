@@ -54,6 +54,11 @@ public static class Utils
         int topRightIndex = (v + 1) * (resolution + 1) + (u + 1);
         int topIndex = (v + 1) * (resolution + 1) + u;
 
+        AssignTriangles(triangles, ti, currentIndex, rightIndex, topRightIndex, topIndex);
+    }
+
+    public static void AssignTriangles(int[] triangles, int ti, int currentIndex, int rightIndex, int topRightIndex, int topIndex)
+    {
         triangles[ti] = currentIndex;
         triangles[ti + 1] = topRightIndex;
         triangles[ti + 2] = rightIndex;

@@ -138,7 +138,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] DistributionParams distributionParams;
 
     const int mapChunkSize = 240;
-    const int islandChunkSize = 60;
+    const int islandChunkSize = 62;
     const int islandChunkCount = 6;
 
     [SerializeField] NoiseSettings noiseSettings;

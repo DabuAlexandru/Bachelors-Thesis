@@ -381,6 +381,7 @@ public static class IslandGenerator
             for (int i = 0; i < resolution; i++)
             {
                 GameObject terrainChunk = new GameObject("TerrainChunk" + (j * resolution + i));
+                terrainChunk.layer = LayerMask.NameToLayer("Terrain");
 
                 terrainChunk.AddComponent<MeshFilter>();
                 terrainChunk.AddComponent<MeshRenderer>();

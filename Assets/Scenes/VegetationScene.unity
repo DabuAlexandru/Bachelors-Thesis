@@ -1121,8 +1121,11 @@ MonoBehaviour:
   drag: 0.01
   jumpForce: 2
   gravityForce: 9.81
-  turnSmoothness: 0.1
+  turnSmoothness: 0.075
   animator: {fileID: 952964456}
+  terrainMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!95 &952964456 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 119856235404379204, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}

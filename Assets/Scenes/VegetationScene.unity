@@ -307,6 +307,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 16373600434019492, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 16373600434019492, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
@@ -368,9 +372,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8760513295325277349, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8760513295325277349, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+      propertyPath: m_jumpForce
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8760513295325277349, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+      propertyPath: m_moveSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 16373600434019492, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+    - {fileID: 80885906008384512, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+    - {fileID: 8760513295325277349, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
 --- !u!1 &336915857
 GameObject:
@@ -1088,6 +1103,47 @@ MonoBehaviour:
   timerText: {fileID: 1766161655}
   collectibleText: {fileID: 1783107622}
   collectible: {fileID: 887727218263771421, guid: f3a1c11afa8dd8943865e28f25af3716, type: 3}
+--- !u!114 &952964455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952964453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115496981c73a1446b9b9e70e070e367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 1234949338}
+  moveSpeed: 4
+  jumpForce: 2
+  gravityForce: 9.81
+  turnSmoothness: 0.1
+  animator: {fileID: 952964456}
+--- !u!95 &952964456 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 119856235404379204, guid: 615fbb20f18f0b743b39e3f55af4b4f0, type: 3}
+  m_PrefabInstance: {fileID: 334773556}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &952964457
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952964453}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 0.8
+  m_Radius: 0.25
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &1184615535
 GameObject:
   m_ObjectHideFlags: 0
@@ -1894,6 +1950,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cdc73bc0369f9be42b6f5533f2c813f5, type: 3}
+--- !u!4 &1234949338 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3561762666326828346, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
+  m_PrefabInstance: {fileID: 483506800}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1268305989
 GameObject:
   m_ObjectHideFlags: 0
@@ -1906,7 +1967,7 @@ GameObject:
   - component: {fileID: 1268305992}
   - component: {fileID: 1268305991}
   m_Layer: 5
-  m_Name: Timer (2)
+  m_Name: Pause
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2918,7 +2979,7 @@ GameObject:
   - component: {fileID: 1813225624}
   - component: {fileID: 1813225623}
   m_Layer: 5
-  m_Name: Timer (1)
+  m_Name: Counter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

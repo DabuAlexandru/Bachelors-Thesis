@@ -9,7 +9,6 @@ public class EndLevel : MonoBehaviour
     }
 
     void OnControllerColliderHit(ControllerColliderHit other) {
-        Debug.Log(other);
         if(puzzlesHandler.HasBeenValidated() && other.gameObject.CompareTag("Player"))
             SceneManager.LoadScene("LevelSelect");
     }

@@ -5,13 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class GameHandler : MonoBehaviour
 {
-    Transform Player;
+    GameObject Player;
 
     [SerializeReference] private Material skybox;
 
     void Start()
     {
-        Player = GameObject.FindWithTag("Player").transform;
+        Player = GameObject.FindWithTag("Player");
         SavePuzzleData.CreatPuzzleDataSaveFile();
 
         Scene scene = SceneManager.GetActiveScene();
@@ -24,6 +24,7 @@ public class GameHandler : MonoBehaviour
 
     void InitializePlayerPosition()
     {
+        Player.SetActive(false);
         Vector3 position;
         position.x = PlayerPrefs.GetFloat("PlayerPositionX", 0.0f);
         PlayerPrefs.DeleteKey("PlayerPositionX");
@@ -40,6 +41,7 @@ public class GameHandler : MonoBehaviour
         PlayerPrefs.DeleteKey("PlayerRotationY");
 
         Player.transform.Rotate(new Vector3(0.0f, rotationY, 0.0f));
+        Player.SetActive(true);
     }
 
     private void OnApplicationQuit() => SavePuzzleData.instance.SavePuzzleDataToFile();

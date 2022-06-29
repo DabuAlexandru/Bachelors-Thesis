@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Collectible
   - Portal
+  - Water
   layers:
   - Default
   - TransparentFX

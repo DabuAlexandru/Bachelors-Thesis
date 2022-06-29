@@ -324,8 +324,8 @@ public static class IslandGenerator
 
     public static void PlacePlayer()
     {
-        Transform Player = GameObject.FindWithTag("Player").transform;
-        Player.SetParent(island.transform);
+        GameObject Player = GameObject.FindWithTag("Player");
+        Player.transform.SetParent(island.transform);
         int step = (int)Mathf.Floor(mapChunkSize * 0.1f);
         int minIndex = Mathf.Min(0, resolution - 1), maxIndex = resolution / 2;
         for (int j = minIndex; j < maxIndex; j++)
@@ -337,8 +337,10 @@ public static class IslandGenerator
                     int u = i * mapChunkSize + k, v = j * mapChunkSize + k;
                     if (heightMap[u, v] > minHeight)
                     {
+                        Player.SetActive(false);
                         Player.transform.position = new Vector3(MapToWorldCoord(u), heightMap[u, v] * meshHeightMultiplier + 1f, MapToWorldCoord(v));
-                        Player.SetParent(island.transform);
+                        Player.SetActive(true);
+                        Player.transform.SetParent(island.transform);
                         return;
                     }
                 }

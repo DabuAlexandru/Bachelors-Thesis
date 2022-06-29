@@ -62,6 +62,8 @@ public class Puzzle : MonoBehaviour
 
     public bool IsPuzzleSolved() => (GetSimilarity() >= minValidScore);
 
+    public float getMinValidScore() => minValidScore;
+
     float GetSimilarity()
     {
         float difference = PuzzleDataUtils.GetDifference(ringRadiusPercentages, intendedConfiguration);
@@ -90,6 +92,7 @@ public class Puzzle : MonoBehaviour
         if(isEditable || isPreview)
         {
             columnID = PlayerPrefs.GetInt("PuzzleID");
+            minValidScore = PlayerPrefs.GetFloat("PuzzleMinScore");
         }
         if (isEditable)
         {

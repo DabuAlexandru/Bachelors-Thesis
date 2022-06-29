@@ -30,7 +30,7 @@ public class GameHandler : MonoBehaviour
         position.y = PlayerPrefs.GetFloat("PlayerPositionY", 0.0f);
         PlayerPrefs.DeleteKey("PlayerPositionY");
 
-        position.z = PlayerPrefs.GetFloat("PlayerPositionZ", -3.0f);
+        position.z = PlayerPrefs.GetFloat("PlayerPositionZ", -33.0f);
         PlayerPrefs.DeleteKey("PlayerPositionZ");
         Player.transform.position = position;
 

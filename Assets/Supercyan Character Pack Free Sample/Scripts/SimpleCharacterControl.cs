@@ -9,7 +9,7 @@ public class SimpleCharacterControl : MonoBehaviour
     [SerializeField] float jumpForce = 4f;
     [SerializeField] float gravityForce = 9.81f;
     [SerializeField] float turnSmoothness = .1f;
-    [SerializeField] float acceleration = .25f;
+    [SerializeField] float acceleration = 3f;
     [SerializeField] private Animator animator = null;
     [SerializeReference] private LayerMask terrainMask;
     private Transform cameraTransform;
@@ -65,15 +65,13 @@ public class SimpleCharacterControl : MonoBehaviour
         float movX = Input.GetAxisRaw("Horizontal");
         float movZ = Input.GetAxisRaw("Vertical");
 
-        Vector3 dir = new Vector3(movX, 0f, movZ).normalized;
+        Vector3 rawDir = new Vector3(movX, 0f, movZ);
+        Vector3 dir = rawDir.normalized;
 
-        if (isGrounded)
-        {
-            float modifiedDrag = drag * Time.deltaTime;
-            procAcc = Mathf.Max(0f, procAcc - modifiedDrag);
-        }
+        float modifiedDrag = drag * Time.deltaTime;
+        procAcc = Mathf.Max(0f, procAcc - modifiedDrag);
 
-        if (dir.magnitude >= movEpsilon)
+        if (rawDir.magnitude >= movEpsilon)
         {
             float target = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothVelocity, turnSmoothness);
@@ -84,7 +82,7 @@ public class SimpleCharacterControl : MonoBehaviour
 
             velocity.x = movement.x;
             velocity.z = movement.z;
-            procAcc = Mathf.Min(procAcc + acceleration, 1f);
+            procAcc = Mathf.Min(procAcc + acceleration * Time.deltaTime, 1f);
         }
         Vector3 mov = new Vector3(velocity.x * procAcc, 0.0f, velocity.z * procAcc);
         controller.Move(mov);

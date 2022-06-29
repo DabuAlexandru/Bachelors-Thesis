@@ -8,6 +8,7 @@ public class LaunchPuzzle : MonoBehaviour
     Transform Player;
     bool isActive;
     int puzzleID;
+    float minValidScore;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,7 @@ public class LaunchPuzzle : MonoBehaviour
         Player = GameObject.FindWithTag("Player").transform;
         GameObject parent = transform.parent.gameObject;
         puzzleID = parent.GetComponent<Puzzle>().getColumnID();
+        minValidScore = parent.GetComponent<Puzzle>().getMinValidScore();
     }
 
     void OnTriggerEnter(Collider other)
@@ -46,6 +48,7 @@ public class LaunchPuzzle : MonoBehaviour
             PlayerPrefs.SetFloat("PlayerPositionZ", Player.position.z);
             PlayerPrefs.SetFloat("PlayerRotationY", Player.rotation.y);
             PlayerPrefs.SetInt("PuzzleID", puzzleID);
+            PlayerPrefs.SetFloat("PuzzleMinScore", minValidScore);
             SceneManager.LoadScene("SculptingPuzzle");
         }
     }

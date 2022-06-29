@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour
         PlayerPrefs.DeleteKey("PlayerPositionZ");
         PlayerPrefs.DeleteKey("PlayerRotationY");
         PlayerPrefs.DeleteKey("PuzzleID");
+        PlayerPrefs.DeleteKey("PuzzleMinScore");
         Resume();
         SceneManager.LoadScene("LevelSelect");
     }

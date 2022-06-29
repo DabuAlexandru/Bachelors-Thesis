@@ -18,20 +18,16 @@ public class PersistenceManager
     public static object LoadData (string fileName)
     {
         string path = Application.persistentDataPath + "/" + fileName + ".data";
-        if (File.Exists(path))
+        if (!File.Exists(path))
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-
-            object dataToBeLoaded = formatter.Deserialize(stream);
-            stream.Close();
-
-            return dataToBeLoaded;
+            SavePuzzleData.CreatPuzzleDataSaveFile();
         }
-        else
-        {
-            Debug.LogError("save file not found at path: " + path);
-            return null;
-        }
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(path, FileMode.Open);
+
+        object dataToBeLoaded = formatter.Deserialize(stream);
+        stream.Close();
+
+        return dataToBeLoaded;
     }
 }

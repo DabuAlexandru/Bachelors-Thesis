@@ -9,5 +9,7 @@ public class ChangeMaterial : MonoBehaviour
         PuzzlesHandler puzzlesHandler = GetComponent<PuzzlesHandler>();
         Renderer renderer = GetComponent<Renderer>();
         renderer.sharedMaterial = puzzlesHandler.HasBeenValidated() ? active : inactive;
+        // Collider collider = GetComponent<Collider>();
+        // collider.isTrigger = puzzlesHandler.HasBeenValidated() ? true : false;
     }
 }

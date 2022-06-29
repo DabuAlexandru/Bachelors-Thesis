@@ -372,11 +372,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3561762665871453028, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.081448235
+      value: -0.08144825
       objectReference: {fileID: 0}
     - target: {fileID: 3561762665871453028, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.010386101
+      value: -0.010386103
       objectReference: {fileID: 0}
     - target: {fileID: 3561762665871453028, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.y
@@ -424,11 +424,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3561762666326828346, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.08152146
+      value: -0.08152147
       objectReference: {fileID: 0}
     - target: {fileID: 3561762666326828346, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.009794768
+      value: -0.009794771
       objectReference: {fileID: 0}
     - target: {fileID: 3561762666326828346, guid: 5bbf55d8dbbace74b945906be0b31c11, type: 3}
       propertyPath: m_LocalRotation.y
@@ -1414,6 +1414,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Portal
       objectReference: {fileID: 0}
+    - target: {fileID: 304728657586554596, guid: 57a5bb1303aa2d441bef81e0b65aa3b8, type: 3}
+      propertyPath: m_TagString
+      value: Portal
+      objectReference: {fileID: 0}
     - target: {fileID: 1633168152833864497, guid: 57a5bb1303aa2d441bef81e0b65aa3b8, type: 3}
       propertyPath: columnID
       value: 2
@@ -1426,6 +1430,14 @@ PrefabInstance:
       propertyPath: InteractPromt
       value: 
       objectReference: {fileID: 1619776119}
+    - target: {fileID: 4150787712404218704, guid: 57a5bb1303aa2d441bef81e0b65aa3b8, type: 3}
+      propertyPath: m_Convex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4150787712404218704, guid: 57a5bb1303aa2d441bef81e0b65aa3b8, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6942938562074128975, guid: 57a5bb1303aa2d441bef81e0b65aa3b8, type: 3}
       propertyPath: InteractPromt
       value: 

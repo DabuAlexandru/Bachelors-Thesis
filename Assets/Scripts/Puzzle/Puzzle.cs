@@ -60,7 +60,10 @@ public class Puzzle : MonoBehaviour
         }
     }
 
-    public bool IsPuzzleSolved() => (GetSimilarity() >= minValidScore);
+    public bool IsPuzzleSolved() {
+        float similarity = GetSimilarity();
+        return (similarity >= minValidScore) && (similarity < 99.85f);
+    }
 
     public float getMinValidScore() => minValidScore;
 
@@ -89,7 +92,7 @@ public class Puzzle : MonoBehaviour
         puzzleColumn = new SingleStreamCylindricalProceduralMesh(GetComponent<MeshFilter>());
         PuzzleDataUtils.InitializeRingConfig(ringRadiusPercentages);
         PuzzleDataUtils.InitializeRingConfig(intendedConfiguration);
-        if(isEditable || isPreview)
+        if (isEditable || isPreview)
         {
             columnID = PlayerPrefs.GetInt("PuzzleID");
             minValidScore = PlayerPrefs.GetFloat("PuzzleMinScore");
@@ -102,7 +105,7 @@ public class Puzzle : MonoBehaviour
             UpdateGoalText();
             SetButtonsEvents();
         }
-        if(SavePuzzleData.instance.puzzleCollection.ContainsKey(columnID))
+        if (SavePuzzleData.instance.puzzleCollection.ContainsKey(columnID))
         {
             PuzzleData puzzleData = SavePuzzleData.instance.puzzleCollection.GetPuzzle(columnID);
             PuzzleDataUtils.CopyContents(puzzleData.GetRingRadiusPercentages(), ringRadiusPercentages);
@@ -148,7 +151,7 @@ public class Puzzle : MonoBehaviour
     {
         columnMesh = puzzleColumn.GetMeshFilter().mesh;
         verticesInitialPos = columnMesh.vertices;
-        if(SavePuzzleData.instance.puzzleCollection.ContainsKey(columnID))
+        if (SavePuzzleData.instance.puzzleCollection.ContainsKey(columnID))
         {
             PuzzleData puzzleData = SavePuzzleData.instance.puzzleCollection.GetPuzzle(columnID);
             PuzzleDataUtils.CopyContents(puzzleData.GetRingRadiusPercentages(), ringRadiusPercentages);

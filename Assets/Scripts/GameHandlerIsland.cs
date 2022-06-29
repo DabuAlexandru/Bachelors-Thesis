@@ -70,13 +70,13 @@ public class GameHandlerIsland : MonoBehaviour
     private void GameWon()
     {
         Debug.Log("GameWon");
-        //
+        SceneManager.LoadScene("LevelSelect");
     }
 
     private void GameOver()
     {
         Debug.Log("GameOver");
-        //
+        SceneManager.LoadScene("LevelSelect");
     }
 
     private void Update()

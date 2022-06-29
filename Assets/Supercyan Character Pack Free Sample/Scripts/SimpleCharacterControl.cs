@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class SimpleCharacterControl : MonoBehaviour
 {
@@ -123,6 +123,20 @@ public class SimpleCharacterControl : MonoBehaviour
             HandlePlayerMovement();
             HandlePlayerJump();
             wasGrounded = isGrounded;
+        }
+    }
+
+    void OnControllerColliderHit(ControllerColliderHit other)
+    {
+        if(other.gameObject.CompareTag("Portal"))
+        {
+            PuzzlesHandler puzzlesHandler = other.gameObject.GetComponent<PuzzlesHandler>();
+            if(puzzlesHandler.HasBeenValidated())
+                SceneManager.LoadScene("LevelSelect");
+        }
+        else if(other.gameObject.CompareTag("Water"))
+        {
+            SceneManager.LoadScene("LevelSelect");
         }
     }
 }

@@ -5,7 +5,8 @@ public class SavePuzzleData
 {
     SavePuzzleData()
     {
-        puzzleCollection = new PuzzleDictionary(GetLoadedPuzzleData());
+        // puzzleCollection = new PuzzleDictionary(GetLoadedPuzzleData());
+        puzzleCollection = new PuzzleDictionary();
     }
     private static readonly object myLock = new object();
     private static SavePuzzleData _instance;
@@ -40,6 +41,10 @@ public class SavePuzzleData
     {
         PersistenceManager.SaveData(Constants.puzzleDataFile, puzzleCollection);
     }
+
+    public static void CreatPuzzleDataSaveFile() => PersistenceManager.SaveData(Constants.puzzleDataFile, new PuzzleDictionary());
+
+    public static void ClearPuzzleDataFromFile() => CreatPuzzleDataSaveFile();
 
     public PuzzleDictionary puzzleCollection;
 }

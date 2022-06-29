@@ -8,7 +8,8 @@ public class EndLevel : MonoBehaviour
         puzzlesHandler = GetComponent<PuzzlesHandler>();
     }
 
-    private void OnCollisionEnter(Collision other) {
+    void OnControllerColliderHit(ControllerColliderHit other) {
+        Debug.Log(other);
         if(puzzlesHandler.HasBeenValidated() && other.gameObject.CompareTag("Player"))
             SceneManager.LoadScene("LevelSelect");
     }

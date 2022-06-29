@@ -2433,6 +2433,10 @@ PrefabInstance:
       propertyPath: collectibleText
       value: 
       objectReference: {fileID: 1783107622}
+    - target: {fileID: 952964455, guid: 1669fcc8ad9a1bc47bafb446884dd73e, type: 3}
+      propertyPath: acceleration
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6111076569651776979, guid: 1669fcc8ad9a1bc47bafb446884dd73e, type: 3}
       propertyPath: m_Name
       value: Character

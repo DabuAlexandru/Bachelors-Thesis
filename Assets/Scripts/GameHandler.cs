@@ -12,6 +12,7 @@ public class GameHandler : MonoBehaviour
     void Start()
     {
         Player = GameObject.FindWithTag("Player").transform;
+        SavePuzzleData.CreatPuzzleDataSaveFile();
 
         Scene scene = SceneManager.GetActiveScene();
 

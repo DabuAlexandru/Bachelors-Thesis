@@ -39,7 +39,7 @@ public class LaunchPuzzle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isActive && Input.GetKeyUp(KeyCode.E))
+        if (isActive && Input.GetKeyUp(KeyCode.E) && !PauseMenu.gameIsPaused)
         {
             PlayerPrefs.SetFloat("PlayerPositionX", Player.position.x);
             PlayerPrefs.SetFloat("PlayerPositionY", Player.position.y);

@@ -118,10 +118,13 @@ public class SimpleCharacterControl : MonoBehaviour
 
     private void Update()
     {
-        animator.SetBool("Grounded", isGrounded);
-        isGrounded = CheckGrounded();
-        HandlePlayerMovement();
-        HandlePlayerJump();
-        wasGrounded = isGrounded;
+        if (!PauseMenu.gameIsPaused)
+        {
+            animator.SetBool("Grounded", isGrounded);
+            isGrounded = CheckGrounded();
+            HandlePlayerMovement();
+            HandlePlayerJump();
+            wasGrounded = isGrounded;
+        }
     }
 }

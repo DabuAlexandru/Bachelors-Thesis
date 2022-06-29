@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SculptingPuzzle.unity
     guid: 7c88b0efbce46df45a33d35a79232826
+  - enabled: 1
+    path: Assets/Scenes/VegetationScene.unity
+    guid: 5324e9f640609154db6ba7598e483cef
   m_configObjects: {}

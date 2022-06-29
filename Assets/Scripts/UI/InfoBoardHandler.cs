@@ -3,19 +3,14 @@ using TMPro;
 
 public class InfoBoardHandler : MonoBehaviour
 {
-    [SerializeField]
-    string infoText;
-
-    [SerializeReference]
-    GameObject infoPanel;
+    [SerializeField] string infoText;
+    [SerializeReference] GameObject infoPanel;
     private TextMeshProUGUI infoTextObject;
 
-    void Start()
-    {
-        infoTextObject = infoPanel.GetComponentInChildren<TextMeshProUGUI>(true);
-    }
+    void Start() => infoTextObject = infoPanel.GetComponentInChildren<TextMeshProUGUI>(true);
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter(Collider other)
+    {
         if (other.gameObject.CompareTag("Player"))
         {
             infoTextObject.SetText(infoText);
@@ -23,7 +18,8 @@ public class InfoBoardHandler : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other) {
+    private void OnTriggerExit(Collider other)
+    {
         if (other.gameObject.CompareTag("Player"))
         {
             infoPanel.SetActive(false);

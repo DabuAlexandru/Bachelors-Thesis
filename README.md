@@ -4,7 +4,14 @@
 
 This project tackles the problem of generating content for video games using procedural generation techniques. The aim is to use mathematical principles and algorithms to imitate real-world aspects, such as natural environments, using noise functions and controlled random number generators. The goal is to create relevant elements of reasonable quality in a reasonable time while providing game developers with a flexible and efficient way of creating game content.
 
-## 
+## Description
+
+The project was created in Unity C#, utilizing the Universal Rendering Pipeline, as a 3D game that uses shaders and mesh manipulation to enhance the game design.
+The focus of the game is the procedurally generated game elements, including puzzles, terrain, and trees, using noise functions and a graph-based representation of tree ramification.
+
+The game has two levels: 
+* **Platformer**: A level focused more on the game design, in which the mesh manipulation element is the column puzzle. The puzzle can be resolved by modeling the column after a given shape such that we satisfy a similarity threshold.
+* **Explore and Search**: A level in which all the elements are procedurally generated. This level consists of an island where the player must locate 5 blobs to pass. The key elements of the scene are the terrain, which is generated after a chosen noise function, and the trees, which are generated after a binary-tree configuration of the ramification.
 
 ## Final Results
 
